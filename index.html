@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>number-park（すうじパーク）</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <p class="eyebrow">小学校2〜3年生向け</p>
+    <h1>number-park <span>すうじパーク</span></h1>
+    <p>操作して、気づいて、ことばにしよう。大きな数のしくみを楽しく学ぶWebアプリです。</p>
+  </header>
+
+  <nav class="tabs" aria-label="学習メニュー">
+    <button class="tab is-active" data-tab="composer">数をつくる（構成）</button>
+    <button class="tab" data-tab="decomposer">数を分ける（分解）</button>
+    <button class="tab" data-tab="number-line">数のならび（数直線）</button>
+    <button class="tab" data-tab="comparison">大きさくらべ</button>
+    <button class="tab" data-tab="grouping">いくつ分（単位）</button>
+    <button class="tab" data-tab="quiz">チャレンジ</button>
+  </nav>
+
+  <main class="app-shell">
+    <section id="composer" class="panel is-active" aria-labelledby="composer-title">
+      <h2 id="composer-title">数をつくる（構成）</h2>
+      <div id="composer-root"></div>
+    </section>
+
+    <section id="decomposer" class="panel" aria-labelledby="decomposer-title">
+      <h2 id="decomposer-title">数を分ける（分解）</h2>
+      <div id="decomposer-root"></div>
+    </section>
+
+    <section id="number-line" class="panel" aria-labelledby="number-line-title">
+      <h2 id="number-line-title">数のならび（数直線）</h2>
+      <div id="number-line-root"></div>
+    </section>
+
+    <section id="comparison" class="panel" aria-labelledby="comparison-title">
+      <h2 id="comparison-title">大きさくらべ</h2>
+      <div id="comparison-root"></div>
+    </section>
+
+    <section id="grouping" class="panel" aria-labelledby="grouping-title">
+      <h2 id="grouping-title">いくつ分（単位）</h2>
+      <div id="grouping-root"></div>
+    </section>
+
+    <section id="quiz" class="panel" aria-labelledby="quiz-title">
+      <h2 id="quiz-title">チャレンジ</h2>
+      <div id="quiz-root"></div>
+    </section>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
