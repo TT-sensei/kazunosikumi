@@ -10,20 +10,20 @@
   <header class="app-header">
     <p class="eyebrow">小学校2〜3年生向け</p>
     <h1>number-park <span>すうじパーク</span></h1>
-    <p>操作して、気づいて、ことばにしよう。大きな数のしくみを楽しく学ぶWebアプリです。</p>
+    <p>チャレンジを中心に、無限ドリルで位取り・大きな数を練習します。感覚を学ぶコーナーも残しています。</p>
   </header>
 
   <nav class="tabs" aria-label="学習メニュー">
-    <button class="tab is-active" data-tab="composer">数をつくる（構成）</button>
-    <button class="tab" data-tab="decomposer">数を分ける（分解）</button>
-    <button class="tab" data-tab="number-line">数のならび（数直線）</button>
-    <button class="tab" data-tab="comparison">大きさくらべ</button>
-    <button class="tab" data-tab="grouping">いくつ分（単位）</button>
-    <button class="tab" data-tab="quiz">チャレンジ</button>
+    <button class="tab is-active" data-tab="quiz">チャレンジ（問題練習）</button>
+    <button class="tab" data-tab="composer">感覚：数をつくる</button>
+    <button class="tab" data-tab="decomposer">感覚：数を分ける</button>
+    <button class="tab" data-tab="number-line">感覚：数のならび</button>
+    <button class="tab" data-tab="comparison">感覚：大きさくらべ</button>
+    <button class="tab" data-tab="grouping">感覚：いくつ分</button>
   </nav>
 
   <main class="app-shell">
-    <section id="composer" class="panel is-active" aria-labelledby="composer-title">
+    <section id="composer" class="panel" aria-labelledby="composer-title">
       <h2 id="composer-title">数をつくる（構成）</h2>
       <div id="composer-root"></div>
     </section>
@@ -48,8 +48,8 @@
       <div id="grouping-root"></div>
     </section>
 
-    <section id="quiz" class="panel" aria-labelledby="quiz-title">
-      <h2 id="quiz-title">チャレンジ</h2>
+    <section id="quiz" class="panel is-active" aria-labelledby="quiz-title">
+      <h2 id="quiz-title">チャレンジ（問題練習）</h2>
       <div id="quiz-root"></div>
     </section>
   </main>
