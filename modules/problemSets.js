@@ -51,27 +51,22 @@ function makeProblem(type, question, answer, hint, difficulty = 'ふつう', ext
   return { type, question, answer, hint, difficulty, extraData };
 }
 
-function numberLineText(start, end, blanks, tickCount) {
-  const parts = [];
-  for (let index = 0; index <= tickCount; index += 1) {
-    if (index === 0) parts.push(formatNumber(start));
-    else if (index === tickCount) parts.push(formatNumber(end));
-    else if (blanks.includes(index)) parts.push('□');
-    else parts.push('・');
-  }
-  return parts.join(' ─ ');
-}
+// 数直線問題（□は1つだけにする）
+function makeNumberLineProblem({ start, step, tickCount, blank, label = '数直線' }) {
+  const answerValue = start + step * blank;
+  const prevVal = blank > 0 ? start + step * (blank - 1) : null;
+  
+  const hintText = prevVal !== null
+    ? `1めもりは【 ${formatNumber(step)} 】だよ。${formatNumber(prevVal)} のつぎの目盛りをかんがえよう！`
+    : `1めもりは【 ${formatNumber(step)} 】だよ。スタートの数からかんがえよう！`;
 
-function makeNumberLineProblem({ start, step, tickCount, blanks, label = '数直線' }) {
-  const end = start + step * tickCount;
-  const answers = blanks.map((blank) => formatNumber(start + step * blank)).join('、');
   return makeProblem(
     '数直線・前後・大小比較',
-    `${label}：${numberLineText(start, end, blanks, tickCount)}。□に入る数を左から答えよう。`,
-    answers,
-    `両端の差 ${formatNumber(end - start)} を ${tickCount} 等分して、1目盛りを考えよう。`,
-    'むずかしい',
-    { uiType: 'number-line', start, end, blanks, tickCount, step }
+    `数直線の □ にはいる 数は いくつかな？`,
+    answerValue,
+    hintText,
+    'ふつう',
+    { uiType: 'number-line', start, step, tickCount, blank, inputMode: 'number' }
   );
 }
 
@@ -131,30 +126,32 @@ function scaleQuestions(level) {
 
 function lineCompareQuestions(level) {
   if (level === 1) {
-    const start = randomInt(56, 78) * 100;
-    const step = choice([10, 20, 50]);
-    const tickCount = choice([10, 12, 16]);
+    const start = randomInt(10, 50) * 100;
+    const step = choice([10, 50, 100]);
+    const tickCount = 6; // 目盛り数を少なくして見やすく
+    const blank = randomInt(1, tickCount - 1); // 穴埋めは1つだけ
+
     const left = randomInt(4, 8) * 1000 + 40;
     const right = left + choice([-90, 90, 100]);
     return [
-      makeNumberLineProblem({ start, step, tickCount, blanks: shuffle([3, 7, tickCount - 2]).slice(0, 3) }),
-      makeProblem('数直線・前後・大小比較', `10,000より1小さい数はいくつ？`, 9999, '9999→10000の境界に注意。', 'むずかしい', { inputMode: 'number' }),
+      makeNumberLineProblem({ start, step, tickCount, blank }),
+      makeProblem('数直線・前後・大小比較', `10,000より1小さい数はいくつ？`, 9999, '9999→10000の境界に注意。', 'ふつう', { inputMode: 'number' }),
       makeProblem('数直線・前後・大小比較', `${formatNumber(left)} ○ ${formatNumber(right)}。○に入る不等号を答えましょう。`, left > right ? '>' : left < right ? '<' : '=', '千の位から順にくらべよう。', 'ふつう', { uiType: 'compare' }),
-      makeProblem('数直線・前後・大小比較', `${formatNumber(start + 10)}より10小さい数はいくつ？`, start, '十の位が1つ下がるよ。', 'ふつう', { inputMode: 'number' }),
-      makeProblem('数直線・前後・大小比較', `${formatNumber(start + 100)}より100小さい数はいくつ？`, start, '百の位が1つ下がるよ。', 'ふつう', { inputMode: 'number' })
+      makeProblem('数直線・前後・大小比較', `${formatNumber(start + 10)}より10小さい数はいくつ？`, start, '十の位が1つ下がるよ。', 'ふつう', { inputMode: 'number' })
     ];
   }
-  const start = randomInt(120, 780) * 100000;
-  const step = choice([100000, 500000, 1000000]);
-  const tickCount = choice([10, 12, 20]);
+
+  const start = randomInt(10, 50) * 100000;
+  const step = choice([100000, 500000]);
+  const tickCount = 6;
+  const blank = randomInt(1, tickCount - 1);
+
   const left = randomInt(30, 80) * 1000000 + 40000;
   const right = left + choice([-10000, 10000, 100000]);
   return [
-    makeNumberLineProblem({ start, step, tickCount, blanks: shuffle([2, 9, tickCount - 3]).slice(0, 3) }),
-    makeProblem('数直線・前後・大小比較', `1億より1小さい数はいくつ？`, 99999999, '99,999,999→100,000,000の境界に注意。', 'むずかしい', { inputMode: 'number' }),
-    makeProblem('数直線・前後・大小比較', `1,000万より1万小さい数はいくつ？`, 9990000, '1000万−1万は、万のまとまりを1つ減らすよ。', 'むずかしい', { inputMode: 'number' }),
-    makeProblem('数直線・前後・大小比較', `${formatNumber(left)} ○ ${formatNumber(right)}。○に入る不等号を答えましょう。`, left > right ? '>' : left < right ? '<' : '=', '大きい位から順にくらべよう。', 'ふつう', { uiType: 'compare' }),
-    makeProblem('数直線・前後・大小比較', `${formatNumber(start)}より1万小さい数はいくつ？`, start - 10000, '万の位を1つ下げる。くり下がりに注意。', 'ふつう', { inputMode: 'number' })
+    makeNumberLineProblem({ start, step, tickCount, blank }),
+    makeProblem('数直線・前後・大小比較', `1億より1小さい数はいくつ？`, 99999999, '99,999,999→100,000,000の境界に注意。', 'ふつう', { inputMode: 'number' }),
+    makeProblem('数直線・前後・大小比較', `${formatNumber(left)} ○ ${formatNumber(right)}。○に入る不等号を答えましょう。`, left > right ? '>' : left < right ? '<' : '=', '大きい位から順にくらべよう。', 'ふつう', { uiType: 'compare' })
   ];
 }
 
@@ -183,21 +180,8 @@ function cardQuestions(level) {
   const closest = candidates.sort((a, b) => Math.abs(a - target) - Math.abs(b - target) || a - b)[0];
   return [
     makeProblem('思考力・カード問題', `カード ${digits.join('・')} を1回ずつ使ってできる${digits.length}けたの最大の数は？`, Number(desc.join('')), '大きい数字を左から置こう。', 'ふつう', { uiType: 'cards', digits }),
-    makeProblem('思考力・カード問題', `カード ${digits.join('・')} を1回ずつ使ってできる${digits.length}けたの最小の数は？`, Number(minDigits.join('')), 'いちばん左に0は置けないよ。', 'むずかしい', { uiType: 'cards', digits }),
-    makeProblem('思考力・カード問題', `カード ${digits.join('・')} を1回ずつ使って、${formatNumber(target)}に一番近い数を作りましょう。`, closest, 'まず一番大きい位を目標に近づけよう。', 'むずかしい', { uiType: 'cards', digits })
-  ];
-}
-
-function compositeSet(level) {
-  const step = level === 1 ? choice([10, 20, 50]) : choice([10000, 50000, 100000]);
-  const tickCount = choice([10, 12, 15, 20]);
-  const start = level === 1 ? randomInt(58, 96) * 100 : randomInt(120, 860) * 100000;
-  const blanks = [2, Math.floor(tickCount / 2), tickCount - 2];
-  const answerValues = blanks.map((blank) => start + step * blank);
-  const groupingUnit = level === 1 ? 10 : 10000;
-  return [
-    makeNumberLineProblem({ start, step, tickCount, blanks, label: '複合（数直線＋位取り＋まとまり）' }),
-    makeProblem('構成・相対的な大きさ', `上の数直線のまん中の□（${formatNumber(answerValues[1])}）は、${formatNumber(groupingUnit)}を何こ集めた数？`, answerValues[1] / groupingUnit, '数直線で数を決めてから、まとまりでわろう。', 'むずかしい', { inputMode: 'number' })
+    makeProblem('思考力・カード問題', `カード ${digits.join('・')} を1回ずつ使ってできる${digits.length}けたの最小の数は？`, Number(minDigits.join('')), 'いちばん左に0は置けないよ。', 'ふつう', { uiType: 'cards', digits }),
+    makeProblem('思考力・カード問題', `カード ${digits.join('・')} を1回ずつ使って、${formatNumber(target)}に一番近い数を作りましょう。`, closest, 'まず一番大きい位を目標に近づけよう。', 'ふつう', { uiType: 'cards', digits })
   ];
 }
 
@@ -207,8 +191,7 @@ function buildProblemPool(level) {
     ...groupingQuestions(level),
     ...scaleQuestions(level),
     ...lineCompareQuestions(level),
-    ...cardQuestions(level),
-    ...compositeSet(level)
+    ...cardQuestions(level)
   ];
 }
 
@@ -237,8 +220,7 @@ export function renderNumberParkQuiz(root) {
     availableCards: [],
     inputValue: '',
     isAnswered: false,
-    isCorrect: false,
-    showHint: false
+    isCorrect: false
   };
 
   function startQuiz() {
@@ -253,7 +235,6 @@ export function renderNumberParkQuiz(root) {
     state.inputValue = '';
     state.isAnswered = false;
     state.isCorrect = false;
-    state.showHint = false;
 
     if (current.extraData?.uiType === 'cards') {
       state.availableCards = [...current.extraData.digits];
@@ -266,7 +247,6 @@ export function renderNumberParkQuiz(root) {
     if (state.isAnswered) return;
 
     const current = state.problems[state.currentIndex];
-    // 文字列・数値、カンマを除去して比較
     const cleanUser = String(userAnswer).replace(/,/g, '').trim();
     const cleanTarget = String(current.answer).replace(/,/g, '').trim();
 
@@ -297,7 +277,6 @@ export function renderNumberParkQuiz(root) {
           user-select: none;
         }
 
-        /* ヘッダー・進捗 */
         .np-header {
           display: flex;
           justify-content: space-between;
@@ -336,7 +315,6 @@ export function renderNumberParkQuiz(root) {
           transition: width 0.3s ease;
         }
 
-        /* 問題エリア */
         .np-card {
           background: #f7fafc;
           border: 2px solid #e2e8f0;
@@ -361,25 +339,88 @@ export function renderNumberParkQuiz(root) {
           margin-bottom: 0.75rem;
         }
 
-        /* インタラクティブUIエリア */
+        /* 視覚的な数直線スタイル */
+        .np-number-line-graphic {
+          width: 100%;
+          margin: 1rem 0;
+          padding: 1rem 0.5rem;
+          background: #ffffff;
+          border-radius: 10px;
+          border: 1px solid #e2e8f0;
+        }
+        .np-line-step-hint {
+          background: #feebc8;
+          color: #744210;
+          font-size: 0.85rem;
+          font-weight: bold;
+          text-align: center;
+          padding: 0.4rem;
+          border-radius: 6px;
+          margin-bottom: 0.75rem;
+        }
+        .np-line-ticks {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-end;
+          position: relative;
+          padding: 0 10px;
+        }
+        .np-line-ticks::before {
+          content: '';
+          position: absolute;
+          bottom: 22px;
+          left: 15px;
+          right: 15px;
+          height: 4px;
+          background: #a0aec0;
+          z-index: 1;
+        }
+        .np-tick-item {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          position: relative;
+          z-index: 2;
+        }
+        .np-tick-mark {
+          width: 3px;
+          height: 14px;
+          background: #4a5568;
+          margin-bottom: 6px;
+        }
+        .np-tick-label {
+          font-size: 0.75rem;
+          font-weight: bold;
+          color: #4a5568;
+          white-space: nowrap;
+        }
+        .np-tick-label.target {
+          background: #e53e3e;
+          color: white;
+          padding: 0.2rem 0.5rem;
+          border-radius: 6px;
+          font-size: 0.9rem;
+          box-shadow: 0 2px 4px rgba(229, 62, 62, 0.3);
+        }
+
         .np-interactive-area {
           margin-top: 1rem;
           padding: 1rem;
           background: #ffffff;
           border-radius: 10px;
           border: 1px dashed #cbd5e0;
-          min-height: 120px;
+          min-height: 100px;
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
         }
 
-        /* 1. カード演出 */
+        /* カード問題 */
         .np-cards-container {
           display: flex;
           gap: 0.5rem;
-          margin-bottom: 1rem;
+          margin-bottom: 0.75rem;
         }
         .np-num-card {
           width: 50px;
@@ -395,10 +436,6 @@ export function renderNumberParkQuiz(root) {
           color: #2b6cb0;
           box-shadow: 0 4px 6px rgba(0,0,0,0.05);
           cursor: pointer;
-          transition: transform 0.1s, background-color 0.2s;
-        }
-        .np-num-card:active {
-          transform: scale(0.95);
         }
         .np-card-slot {
           width: 50px;
@@ -406,12 +443,9 @@ export function renderNumberParkQuiz(root) {
           border: 2px dashed #a0aec0;
           border-radius: 8px;
           background: #edf2f7;
-          display: flex;
-          align-items: center;
-          justify-content: center;
         }
 
-        /* 2. 不等号ボタン */
+        /* 不等号 */
         .np-compare-buttons {
           display: flex;
           gap: 1rem;
@@ -428,7 +462,7 @@ export function renderNumberParkQuiz(root) {
           cursor: pointer;
         }
 
-        /* 3. カスタムキーパッド */
+        /* キーパッド */
         .np-keypad {
           display: grid;
           grid-template-columns: repeat(5, 1fr);
@@ -456,7 +490,6 @@ export function renderNumberParkQuiz(root) {
           color: #e53e3e;
         }
 
-        /* 回答入力表示エリア */
         .np-answer-display {
           font-size: 1.5rem;
           font-weight: bold;
@@ -468,7 +501,6 @@ export function renderNumberParkQuiz(root) {
           color: #2d3748;
         }
 
-        /* 操作ボタン */
         .np-submit-btn {
           width: 100%;
           padding: 0.8rem;
@@ -483,14 +515,12 @@ export function renderNumberParkQuiz(root) {
           box-shadow: 0 4px 6px rgba(49, 130, 206, 0.3);
         }
 
-        /* フィードバックモーダル */
         .np-feedback {
           margin-top: 1rem;
           padding: 1rem;
           border-radius: 10px;
           text-align: center;
           font-weight: bold;
-          animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .np-feedback.correct {
           background: #c6f6d5;
@@ -502,24 +532,9 @@ export function renderNumberParkQuiz(root) {
           color: #742a2a;
           border: 1px solid #feb2b2;
         }
-        .np-hint-box {
-          margin-top: 0.5rem;
-          background: #fffaf0;
-          border: 1px solid #fbd38d;
-          padding: 0.75rem;
-          border-radius: 8px;
-          font-size: 0.85rem;
-          color: #744210;
-        }
-
-        @keyframes pop {
-          0% { transform: scale(0.9); opacity: 0; }
-          100% { transform: scale(1); opacity: 1; }
-        }
       </style>
 
       <div class="np-quiz">
-        <!-- ヘッダー -->
         <div class="np-header">
           <div class="np-level-select">
             <button class="${state.level === 1 ? 'active' : ''}" id="btn-lvl1">小2（4けた）</button>
@@ -528,23 +543,23 @@ export function renderNumberParkQuiz(root) {
           <div class="np-score-badge">⭐ ${state.score} 点</div>
         </div>
 
-        <!-- プログレスバー -->
         <div class="np-progress-bar">
           <div class="np-progress-fill" style="width: ${((state.currentIndex + 1) / state.problems.length) * 100}%"></div>
         </div>
 
-        <!-- 問題カード -->
         <div class="np-card">
           <span class="np-tag">${current.type}</span>
           <div class="np-question-text">問 ${state.currentIndex + 1}. ${current.question}</div>
 
-          <!-- インタラクティブ回答UI -->
+          <!-- 数直線グラフィック（該当問題のみ表示） -->
+          ${current.extraData?.uiType === 'number-line' ? renderNumberLineGraphic(current.extraData) : ''}
+
+          <!-- 回答入力エリア -->
           <div class="np-interactive-area">
             ${renderInteractiveContent(current)}
           </div>
         </div>
 
-        <!-- 結果フィードバック -->
         ${state.isAnswered ? `
           <div class="np-feedback ${state.isCorrect ? 'correct' : 'wrong'}">
             ${state.isCorrect ? '🎉 だいせいかい！' : `❌ ざんねん… 正解は 「 ${formatNumber(current.answer)} 」`}
@@ -558,16 +573,40 @@ export function renderNumberParkQuiz(root) {
     bindEvents();
   }
 
-  // 問題形式に応じたUI描画
+  // グラフィック数直線コンポーネント
+  function renderNumberLineGraphic(data) {
+    const { start, step, tickCount, blank } = data;
+    
+    let ticksHtml = '';
+    for (let i = 0; i <= tickCount; i++) {
+      const val = start + step * i;
+      const isTarget = i === blank;
+
+      ticksHtml += `
+        <div class="np-tick-item">
+          <div class="np-tick-mark"></div>
+          <div class="np-tick-label ${isTarget ? 'target' : ''}">
+            ${isTarget ? '❓ □' : formatNumber(val)}
+          </div>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="np-number-line-graphic">
+        <div class="np-line-step-hint">💡 1めもりは 【 ${formatNumber(step)} 】 ずつ ふえているよ！</div>
+        <div class="np-line-ticks">${ticksHtml}</div>
+      </div>
+    `;
+  }
+
   function renderInteractiveContent(problem) {
     const uiType = problem.extraData?.uiType;
 
-    // 1. カード並べ替え問題
     if (uiType === 'cards') {
       const slotCount = problem.extraData.digits.length;
       return `
         <div style="font-size:0.85rem; color:#718096; margin-bottom:0.5rem;">カードをタップして作ろう：</div>
-        <!-- 選択済みの枠 -->
         <div class="np-cards-container">
           ${Array.from({ length: slotCount }).map((_, i) => {
             const card = state.selectedCards[i];
@@ -576,7 +615,6 @@ export function renderNumberParkQuiz(root) {
               : `<div class="np-card-slot"></div>`;
           }).join('')}
         </div>
-        <!-- 手持ちカード -->
         <div class="np-cards-container">
           ${state.availableCards.map((num, i) =>
             `<div class="np-num-card hand-card" data-index="${i}">${num}</div>`
@@ -586,7 +624,6 @@ export function renderNumberParkQuiz(root) {
       `;
     }
 
-    // 2. 不等号ボタン（大小比較）
     if (uiType === 'compare') {
       return `
         <div style="font-size:0.85rem; color:#718096; margin-bottom:0.75rem;">○に入る記号をえらぼう：</div>
@@ -598,7 +635,6 @@ export function renderNumberParkQuiz(root) {
       `;
     }
 
-    // 3. テンキー / 漢字キーパッド入力
     const isKanji = problem.extraData?.inputMode === 'kanji';
     return `
       <div class="np-answer-display">${state.inputValue || '<span style="color:#a0aec0;">こたえ</span>'}</div>
@@ -627,17 +663,14 @@ export function renderNumberParkQuiz(root) {
   }
 
   function bindEvents() {
-    // レベル切り替え
     root.querySelector('#btn-lvl1')?.addEventListener('click', () => { state.level = 1; startQuiz(); });
     root.querySelector('#btn-lvl2')?.addEventListener('click', () => { state.level = 2; startQuiz(); });
 
-    // 次へボタン
     root.querySelector('#btn-next')?.addEventListener('click', () => {
       state.currentIndex += 1;
       loadProblem();
     });
 
-    // カード操作
     root.querySelectorAll('.hand-card').forEach((el) => {
       el.addEventListener('click', () => {
         if (state.isAnswered) return;
@@ -662,14 +695,12 @@ export function renderNumberParkQuiz(root) {
       checkAnswer(state.selectedCards.join(''));
     });
 
-    // 不等号ボタン操作
     root.querySelectorAll('.np-compare-btn').forEach((el) => {
       el.addEventListener('click', () => {
         checkAnswer(el.dataset.val);
       });
     });
 
-    // キーパッド操作
     root.querySelectorAll('.num-key').forEach((el) => {
       el.addEventListener('click', () => {
         if (state.isAnswered) return;
@@ -688,6 +719,5 @@ export function renderNumberParkQuiz(root) {
     });
   }
 
-  // 初期化開始
   startQuiz();
 }
