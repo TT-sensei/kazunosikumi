@@ -8,9 +8,17 @@ const smallUnits = [
 ];
 
 const levelSettings = {
-  1: { label: 'レベル1（小2）', min: 1000, max: 10000, units: [1, 10, 100, 1000], target: 7000 },
-  2: { label: 'レベル2（小3）', min: 10000, max: 100000000, units: [1000, 10000, 1000000, 10000000], target: 50000000 }
+  1: { label: 'レベル1（小2）', min: 1000, max: 10000, cardDigits: 4, target: 7000 },
+  2: { label: 'レベル2（小3）', min: 10000, max: 100000000, cardDigits: 5, target: 50000 }
 };
+
+const typeOrder = [
+  '読み書き・位取り',
+  '構成・相対的な大きさ',
+  '10倍・100倍・1/10',
+  '数直線・前後・大小比較',
+  '思考力・カード問題'
+];
 
 function randomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -43,98 +51,179 @@ function toKanji(number) {
   return `${man ? `${toKanjiUnder10000(man)}万` : ''}${rest ? toKanjiUnder10000(rest) : ''}`;
 }
 
-
-function closestCardNumber(cards, target) {
-  const results = [];
-  function build(remaining, used) {
-    if (!remaining.length) {
-      if (used[0] !== 0) results.push(Number(used.join('')));
-      return;
-    }
-    remaining.forEach((card, index) => {
-      build([...remaining.slice(0, index), ...remaining.slice(index + 1)], [...used, card]);
-    });
-  }
-  build(cards, []);
-  return results.sort((a, b) => Math.abs(a - target) - Math.abs(b - target) || a - b)[0];
-}
-
 function makeProblem(type, question, answer, hint, difficulty = 'ふつう') {
   return { type, question, answer, hint, difficulty };
 }
 
-function levelOneProblems() {
-  const zeroNumber = choice([3040, 4070, 5080, 7005, 9006]);
-  const base = randomInt(2, 8) * 1000 + randomInt(1, 9) * 10;
-  const unit = choice([10, 100]);
-  const count = randomInt(12, 98);
-  const grouped = unit * count;
-  const cards = shuffle([0, randomInt(2, 9), randomInt(1, 8), randomInt(3, 9)]);
-  const cardMax = Number([...cards].sort((a, b) => b - a).join(''));
-  const cardMin = Number([...cards].sort((a, b) => a - b).filter((n, i, arr) => i || n !== 0).join('') + (cards.includes(0) ? '0' : ''));
-
-  return [
-    makeProblem('読み書き・位取り', `${formatNumber(zeroNumber)}を漢字で書くと？`, toKanji(zeroNumber), '0の位は読まないよ。'),
-    makeProblem('読み書き・位取り', `${toKanji(base)}を数字で書くと？`, base, '千・百・十・一の位に分けよう。'),
-    makeProblem('構成・相対的な大きさ', `${unit}を${count}こ集めた数はいくつ？`, grouped, `${unit}×${count}で考えよう。`),
-    makeProblem('構成・相対的な大きさ', `${formatNumber(grouped)}は${unit}を何こ集めた数？`, count, `${formatNumber(grouped)}÷${unit}だよ。`),
-    makeProblem('10倍・100倍・1/10', `${randomInt(100, 900)}を10倍するといくつ？`, null, '右に0を1つつけるだけでなく、位が1つ上がると考えよう。'),
-    makeProblem('10倍・100倍・1/10', `${randomInt(20, 90) * 100}の1/10はいくつ？`, null, '位が1つ下がるよ。'),
-    makeProblem('数直線・前後・大小比較', `10,000より1小さい数はいくつ？`, 9999, '9999→10000の境目を思い出そう。', 'むずかしい'),
-    makeProblem('数直線・前後・大小比較', `${formatNumber(randomInt(2, 9) * 1000 + 400)} ○ ${formatNumber(randomInt(2, 9) * 1000 + 40)}。○に入る不等号を答えてね（> または <）。`, null, '千の位からくらべよう。'),
-    makeProblem('数直線・前後・大小比較', `数直線で0から10,000までが5目盛りです。1目盛りはいくつ？`, 2000, '10000を5等分しよう。'),
-    makeProblem('思考力・カード問題', `カード ${cards.join('・')} を1回ずつ使ってできる4けたの最大の数は？`, cardMax, '大きい数字を左からならべよう。'),
-    makeProblem('思考力・カード問題', `カード ${cards.join('・')} を1回ずつ使ってできる4けたの最小の数は？`, cardMin, '千の位に0は置けないよ。', 'むずかしい')
-  ];
-}
-
-function levelTwoProblems() {
-  const withZero = choice([30040000, 5040000, 70080000, 9006000]);
-  const manCount = randomInt(120, 980);
-  const unit = choice([10000, 1000000]);
-  const count = randomInt(12, 90);
-  const cards = shuffle([0, randomInt(1, 9), randomInt(2, 8), randomInt(3, 9), randomInt(4, 9)]);
-  const cardNums = shuffle(cards).join('');
-  const cardClosest = closestCardNumber(cards, 50000);
-
-  return [
-    makeProblem('読み書き・位取り', `${formatNumber(withZero)}を漢字で書くと？`, toKanji(withZero), '0がある位をとばして読もう。'),
-    makeProblem('読み書き・位取り', `${toKanji(manCount * 10000 + 3000)}を数字で書くと？`, manCount * 10000 + 3000, '万のまとまりと下4けたを分けよう。'),
-    makeProblem('構成・相対的な大きさ', `${formatNumber(unit)}を${count}こ集めた数はいくつ？`, unit * count, '何万、何百万になるか考えよう。'),
-    makeProblem('構成・相対的な大きさ', `${formatNumber(manCount * 10000)}は1万を何こ集めた数？`, manCount, '1万のまとまりで数えよう。'),
-    makeProblem('10倍・100倍・1/10', `${formatNumber(randomInt(10, 90) * 10000)}を100倍するといくつ？`, null, '万から億へ位がまたぐことがあるよ。', 'むずかしい'),
-    makeProblem('10倍・100倍・1/10', `1,000万の1/10はいくつ？`, 1000000, '位が1つ下がるよ。'),
-    makeProblem('数直線・前後・大小比較', `1,000万より1万小さい数はいくつ？`, 9990000, '1000万−1万のくり下がりに注意。', 'むずかしい'),
-    makeProblem('数直線・前後・大小比較', `${formatNumber(randomInt(10, 90) * 1000000)} ○ ${formatNumber(randomInt(10, 90) * 1000000 + 10000)}。○に入る不等号を答えてね（> または <）。`, null, '大きい位からくらべよう。'),
-    makeProblem('数直線・前後・大小比較', `数直線で0から1億までが10目盛りです。1目盛りはいくつ？`, 10000000, '1億を10等分しよう。'),
-    makeProblem('思考力・カード問題', `カード ${cards.join('・')} を1回ずつ使って5けたの数を作ります。${formatNumber(50000)}に一番近い数を1つ答えてね。例として ${cardNums} も作れます。`, cardClosest, '万の位が5に近いものから考えよう。', 'むずかしい'),
-    makeProblem('思考力・カード問題', `カード ${cards.join('・')} を1回ずつ使ってできる5けたの最大の数は？`, Number([...cards].sort((a, b) => b - a).join('')), '大きい数字を左からならべよう。')
-  ];
-}
-
-function completeCalculatedAnswers(problem) {
-  const tenTimes = problem.question.match(/^([\d,]+)を10倍/);
-  const hundredTimes = problem.question.match(/^([\d,]+)を100倍/);
-  const tenth = problem.question.match(/^([\d,]+)の1\/10/);
-  const compare = problem.question.match(/^([\d,]+) ○ ([\d,]+)/);
-  if (tenTimes) return { ...problem, answer: Number(tenTimes[1].replaceAll(',', '')) * 10 };
-  if (hundredTimes) return { ...problem, answer: Number(hundredTimes[1].replaceAll(',', '')) * 100 };
-  if (tenth) return { ...problem, answer: Number(tenth[1].replaceAll(',', '')) / 10 };
-  if (compare) {
-    const left = Number(compare[1].replaceAll(',', ''));
-    const right = Number(compare[2].replaceAll(',', ''));
-    return { ...problem, answer: left > right ? '>' : '<' };
+function numberLineText(start, end, blanks, tickCount) {
+  const parts = [];
+  for (let index = 0; index <= tickCount; index += 1) {
+    if (index === 0) parts.push(formatNumber(start));
+    else if (index === tickCount) parts.push(formatNumber(end));
+    else if (blanks.includes(index)) parts.push('□');
+    else parts.push('・');
   }
-  return problem;
+  return parts.join(' ─ ');
+}
+
+function makeNumberLineProblem({ start, step, tickCount, blanks, label = '数直線' }) {
+  const end = start + step * tickCount;
+  const answers = blanks.map((blank) => formatNumber(start + step * blank)).join('、');
+  return makeProblem(
+    '数直線・前後・大小比較',
+    `${label}：${numberLineText(start, end, blanks, tickCount)}。□に入る数を左から答えよう。`,
+    answers,
+    `両端の差 ${formatNumber(end - start)} を ${tickCount} 等分して、1目盛りを考えよう。`,
+    'むずかしい'
+  );
+}
+
+function placeValueQuestions(level) {
+  if (level === 1) {
+    const zeroNumber = choice([3040, 4050, 6008, 7005, 9020]);
+    const writeNumber = randomInt(2, 9) * 1000 + randomInt(1, 9) * 100 + randomInt(1, 9);
+    const missing = randomInt(3, 9) * 1000 + randomInt(1, 9) * 10;
+    return [
+      makeProblem('読み書き・位取り', `${formatNumber(zeroNumber)}を漢字で書きましょう。`, toKanji(zeroNumber), '0がある位は読まないけれど、位は空いているよ。'),
+      makeProblem('読み書き・位取り', `${toKanji(writeNumber)}を数字で書きましょう。`, writeNumber, '千・百・十・一の位に分けよう。'),
+      makeProblem('読み書き・位取り', `${formatNumber(missing)}の十の位の数字はいくつ？`, Math.floor(missing / 10) % 10, '右から2番目が十の位だよ。')
+    ];
+  }
+  const zeroNumber = choice([30040000, 5040000, 70080000, 9006000]);
+  const writeNumber = randomInt(12, 980) * 10000 + choice([40, 300, 5000]);
+  const target = choice([10000000, 1000000, 10000]);
+  const digit = randomInt(2, 9);
+  const placeValueNumber = target * digit + 50000;
+  return [
+    makeProblem('読み書き・位取り', `${formatNumber(zeroNumber)}を漢字で書きましょう。`, toKanji(zeroNumber), '万のまとまりと下4けたに分けよう。'),
+    makeProblem('読み書き・位取り', `${toKanji(writeNumber)}を数字で書きましょう。`, writeNumber, '万より下は4けたになるように0を入れるよ。'),
+    makeProblem('読み書き・位取り', `${formatNumber(placeValueNumber)}の${formatNumber(target)}の位の数字はいくつ？`, Math.floor(placeValueNumber / target) % 10, '位をそろえてから数字を見よう。')
+  ];
+}
+
+function groupingQuestions(level) {
+  const unit = level === 1 ? choice([10, 100, 1000]) : choice([10000, 1000000, 10000000]);
+  const count = level === 1 ? randomInt(12, 98) : randomInt(12, 90);
+  const anotherUnit = level === 1 ? 100 : 10000;
+  const anotherCount = level === 1 ? choice([40, 50, 60, 70, 80, 90]) : choice([990, 1000, 1200]);
+  return [
+    makeProblem('構成・相対的な大きさ', `${formatNumber(unit)}を${count}こ集めた数はいくつ？`, unit * count, 'まとまりの大きさ×個数で考えよう。'),
+    makeProblem('構成・相対的な大きさ', `${formatNumber(unit * count)}は${formatNumber(unit)}を何こ集めた数？`, count, 'わる数を「1つのまとまり」にするよ。'),
+    makeProblem('構成・相対的な大きさ', `${formatNumber(anotherUnit)}を${anotherCount}こ集めると、${level === 1 ? '1000' : '1万'}を何こ集めた数と同じ？`, (anotherUnit * anotherCount) / (level === 1 ? 1000 : 10000), '小さいまとまりを大きいまとまりに直そう。')
+  ];
+}
+
+function scaleQuestions(level) {
+  if (level === 1) {
+    const base = randomInt(120, 890);
+    const hundredBase = randomInt(12, 90);
+    return [
+      makeProblem('10倍・100倍・1/10', `${formatNumber(base)}を10倍するといくつ？`, base * 10, '位が1つ上がるよ。'),
+      makeProblem('10倍・100倍・1/10', `${formatNumber(hundredBase)}を100倍するといくつ？`, hundredBase * 100, '位が2つ上がるよ。'),
+      makeProblem('10倍・100倍・1/10', `${formatNumber(choice([4000, 5000, 6000, 8000, 9000]))}の1/10はいくつ？`, null, '位が1つ下がるよ。')
+    ].map((p) => p.answer === null ? { ...p, answer: Number(p.question.match(/[\d,]+/)[0].replaceAll(',', '')) / 10 } : p);
+  }
+  const tenBase = randomInt(90, 990) * 10000;
+  const hundredBase = randomInt(1, 100) * 10000;
+  return [
+    makeProblem('10倍・100倍・1/10', `${formatNumber(tenBase)}を10倍するといくつ？`, tenBase * 10, '万から億へまたぐことがあるよ。'),
+    makeProblem('10倍・100倍・1/10', `${formatNumber(hundredBase)}を100倍するといくつ？`, hundredBase * 100, '位が2つ上がる。0の数だけで判断しないよ。'),
+    makeProblem('10倍・100倍・1/10', `1億の1/10はいくつ？`, 10000000, '億の1つ下の大きなまとまりは千万だよ。')
+  ];
+}
+
+function lineCompareQuestions(level) {
+  if (level === 1) {
+    const start = randomInt(56, 78) * 100;
+    const step = choice([10, 20, 50]);
+    const tickCount = choice([10, 12, 16]);
+    const left = randomInt(4, 8) * 1000 + 40;
+    const right = left + choice([-90, 90, 100]);
+    return [
+      makeNumberLineProblem({ start, step, tickCount, blanks: shuffle([3, 7, tickCount - 2]).slice(0, 3) }),
+      makeProblem('数直線・前後・大小比較', `10,000より1小さい数はいくつ？`, 9999, '9999→10000の境界に注意。', 'むずかしい'),
+      makeProblem('数直線・前後・大小比較', `${formatNumber(left)} ○ ${formatNumber(right)}。○に入る不等号を答えましょう。`, left > right ? '>' : left < right ? '<' : '=', '千の位から順にくらべよう。'),
+      makeProblem('数直線・前後・大小比較', `${formatNumber(start + 10)}より10小さい数はいくつ？`, start, '十の位が1つ下がるよ。'),
+      makeProblem('数直線・前後・大小比較', `${formatNumber(start + 100)}より100小さい数はいくつ？`, start, '百の位が1つ下がるよ。')
+    ];
+  }
+  const start = randomInt(120, 780) * 100000;
+  const step = choice([100000, 500000, 1000000]);
+  const tickCount = choice([10, 12, 20]);
+  const left = randomInt(30, 80) * 1000000 + 40000;
+  const right = left + choice([-10000, 10000, 100000]);
+  return [
+    makeNumberLineProblem({ start, step, tickCount, blanks: shuffle([2, 9, tickCount - 3]).slice(0, 3) }),
+    makeProblem('数直線・前後・大小比較', `1億より1小さい数はいくつ？`, 99999999, '99,999,999→100,000,000の境界に注意。', 'むずかしい'),
+    makeProblem('数直線・前後・大小比較', `1,000万より1万小さい数はいくつ？`, 9990000, '1000万−1万は、万のまとまりを1つ減らすよ。', 'むずかしい'),
+    makeProblem('数直線・前後・大小比較', `${formatNumber(left)} ○ ${formatNumber(right)}。○に入る不等号を答えましょう。`, left > right ? '>' : left < right ? '<' : '=', '大きい位から順にくらべよう。'),
+    makeProblem('数直線・前後・大小比較', `${formatNumber(start)}より1万小さい数はいくつ？`, start - 10000, '万の位を1つ下げる。くり下がりに注意。')
+  ];
+}
+
+function cardQuestions(level) {
+  const digits = level === 1 ? shuffle([0, randomInt(2, 9), randomInt(1, 8), randomInt(3, 9)]) : shuffle([0, randomInt(1, 9), randomInt(2, 8), randomInt(3, 9), randomInt(4, 9)]);
+  const desc = [...digits].sort((a, b) => b - a);
+  const asc = [...digits].sort((a, b) => a - b);
+  const firstNonZero = asc.findIndex((digit) => digit !== 0);
+  const minDigits = [...asc];
+  [minDigits[0], minDigits[firstNonZero]] = [minDigits[firstNonZero], minDigits[0]];
+  const candidates = permutations(digits).filter((value) => String(value).length === digits.length);
+  const target = level === 1 ? 7000 : 50000;
+  const closest = candidates.sort((a, b) => Math.abs(a - target) - Math.abs(b - target) || a - b)[0];
+  return [
+    makeProblem('思考力・カード問題', `カード ${digits.join('・')} を1回ずつ使ってできる${digits.length}けたの最大の数は？`, Number(desc.join('')), '大きい数字を左から置こう。'),
+    makeProblem('思考力・カード問題', `カード ${digits.join('・')} を1回ずつ使ってできる${digits.length}けたの最小の数は？`, Number(minDigits.join('')), 'いちばん左に0は置けないよ。', 'むずかしい'),
+    makeProblem('思考力・カード問題', `カード ${digits.join('・')} を1回ずつ使って、${formatNumber(target)}に一番近い数を作りましょう。`, closest, 'まず一番大きい位を目標に近づけよう。', 'むずかしい')
+  ];
+}
+
+function permutations(digits) {
+  const results = [];
+  function build(rest, used) {
+    if (!rest.length) {
+      if (used[0] !== 0) results.push(Number(used.join('')));
+      return;
+    }
+    rest.forEach((digit, index) => build([...rest.slice(0, index), ...rest.slice(index + 1)], [...used, digit]));
+  }
+  build(digits, []);
+  return results;
+}
+
+function compositeSet(level) {
+  const step = level === 1 ? choice([10, 20, 50]) : choice([10000, 50000, 100000]);
+  const tickCount = choice([10, 12, 15, 20]);
+  const start = level === 1 ? randomInt(58, 96) * 100 : randomInt(120, 860) * 100000;
+  const blanks = [2, Math.floor(tickCount / 2), tickCount - 2];
+  const answerValues = blanks.map((blank) => start + step * blank);
+  const groupingUnit = level === 1 ? 10 : 10000;
+  return [
+    makeNumberLineProblem({ start, step, tickCount, blanks, label: '複合（数直線＋位取り＋まとまり）' }),
+    makeProblem('構成・相対的な大きさ', `上の数直線のまん中の□（${formatNumber(answerValues[1])}）は、${formatNumber(groupingUnit)}を何こ集めた数？`, answerValues[1] / groupingUnit, '数直線で数を決めてから、まとまりでわろう。', 'むずかしい')
+  ];
+}
+
+function buildProblemPool(level) {
+  return [
+    ...placeValueQuestions(level),
+    ...groupingQuestions(level),
+    ...scaleQuestions(level),
+    ...lineCompareQuestions(level),
+    ...cardQuestions(level),
+    ...compositeSet(level)
+  ];
 }
 
 export function generateProblems(level = 1, size = 20) {
-  const source = level === 2 ? levelTwoProblems : levelOneProblems;
-  const generated = [];
-  while (generated.length < size) {
-    generated.push(...shuffle(source().map(completeCalculatedAnswers)));
+  const required = buildProblemPool(level);
+  const extras = [];
+  while (required.length + extras.length < size) {
+    extras.push(...shuffle(buildProblemPool(level)));
   }
-  return generated.slice(0, size).map((problem, index) => ({ ...problem, id: index + 1 }));
+  return shuffle([...required, ...extras.slice(0, Math.max(0, size - required.length))])
+    .slice(0, size)
+    .map((problem, index) => ({ ...problem, id: index + 1 }));
 }
 
 export { levelSettings };
