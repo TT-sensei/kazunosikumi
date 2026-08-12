@@ -66,3 +66,7 @@ python3 -m http.server 8000
 ## サウンド
 
 音声ファイルは使いません。正解音は `modules/quizEngine.js` の Web Audio API で生成しています。
+
+## 公開ページ
+
+[GitHub Pagesで開く](https://tt-sensei.github.io/kazunosikumi/)
