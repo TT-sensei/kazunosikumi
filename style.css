@@ -336,3 +336,49 @@ label {
   .np-navi-main > img { width: 82px; }
   .np-navi-bubble { padding: 9px 10px; }
 }
+
+/* Number Park challenge UI */
+.np-quiz-wrapper {
+  margin: 0 auto;
+  padding: 1rem;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 10px 25px rgba(0,0,0,.06);
+  color: #2d3748;
+}
+.np-progress-box { margin-bottom: 1rem; }
+.np-progress-info { display:flex; justify-content:space-between; gap:8px; margin-bottom:.35rem; color:#4a5568; font-size:.85rem; font-weight:900; }
+.np-progress-bar { height:10px; overflow:hidden; border-radius:999px; background:#edf2f7; }
+.np-progress-fill { height:100%; border-radius:inherit; background:linear-gradient(90deg,#2563eb,#60a5fa); transition:width .3s ease; }
+.np-card { margin-bottom:1rem; padding:1.25rem; border:2px solid #e2e8f0; border-radius:12px; background:#f7fafc; }
+.np-meta { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:.6rem; }
+.np-badge-type { padding:.2rem .6rem; border-radius:999px; background:#ebf8ff; color:#2b6cb0; font-size:.8rem; font-weight:900; }
+.np-badge-diff { color:#718096; font-size:.8rem; font-weight:800; }
+.np-question-text { color:#1a202c; font-size:clamp(1.2rem,3.7vw,1.75rem); font-weight:900; line-height:1.5; }
+.np-number-line { margin:1rem 0; padding:1rem .5rem; border:1px solid #e2e8f0; border-radius:10px; background:#fff; }
+.np-line-hint-banner { margin-bottom:.75rem; padding:.45rem; border-radius:6px; background:#feebc8; color:#744210; text-align:center; font-size:.85rem; font-weight:900; }
+.np-line-ticks { display:flex; justify-content:space-between; align-items:flex-end; position:relative; padding:0 10px; }
+.np-line-ticks::before { content:''; position:absolute; right:15px; bottom:22px; left:15px; z-index:1; height:4px; background:#a0aec0; }
+.np-tick-item { display:flex; flex-direction:column; align-items:center; position:relative; z-index:2; }
+.np-tick-mark { width:3px; height:14px; margin-bottom:6px; background:#4a5568; }
+.np-tick-label { color:#4a5568; font-size:.75rem; font-weight:900; white-space:nowrap; }
+.np-tick-label.target { padding:.2rem .5rem; border-radius:6px; background:#e53e3e; color:#fff; font-size:.9rem; }
+.np-interactive-area { display:flex; flex-direction:column; align-items:center; margin-top:1rem; padding:1rem; border:1px dashed #cbd5e0; border-radius:10px; background:#fff; }
+.np-cards-container { display:flex; flex-wrap:wrap; justify-content:center; gap:.5rem; margin-bottom:.75rem; }
+.np-num-card { display:flex; align-items:center; justify-content:center; width:48px; height:62px; border:2px solid #3182ce; border-radius:8px; background:#fff; color:#2b6cb0; font-size:1.4rem; font-weight:900; cursor:pointer; box-shadow:0 3px 5px rgba(0,0,0,.08); }
+.np-card-slot { width:48px; height:62px; border:2px dashed #a0aec0; border-radius:8px; background:#edf2f7; }
+.np-compare-buttons { display:flex; gap:1rem; }
+.np-compare-btn { width:64px; height:64px; border:2px solid #3182ce; border-radius:12px; background:#ebf8ff; color:#2b6cb0; font-size:1.6rem; font-weight:900; cursor:pointer; }
+.np-input-row { display:flex; width:100%; max-width:360px; gap:.5rem; margin-bottom:.75rem; }
+.np-input-row input { flex:1; min-width:0; padding:.6rem; border:2px solid #cbd5e0; border-radius:8px; text-align:center; font-size:1.2rem; font-weight:900; }
+.np-keypad { display:grid; grid-template-columns:repeat(5,1fr); width:100%; max-width:360px; gap:.4rem; }
+.np-key-btn { padding:.6rem 0; border:1px solid #cbd5e0; border-radius:8px; background:#fff; font-size:1.1rem; font-weight:900; cursor:pointer; box-shadow:0 2px 0 #cbd5e0; }
+.np-key-btn.action { background:#edf2f7; color:#e53e3e; }
+.np-actions { display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1rem; }
+.np-btn { flex:1; min-height:44px; padding:.7rem; border:0; border-radius:10px; font-size:1rem; font-weight:900; cursor:pointer; }
+.np-btn-primary { background:#3182ce; color:#fff; }
+.np-btn-secondary { border:1px solid #cbd5e0; background:#edf2f7; color:#4a5568; }
+.np-feedback { margin-top:1rem; padding:1rem; border-radius:10px; text-align:center; font-weight:900; }
+.np-feedback.correct { border:1px solid #9ae6b4; background:#c6f6d5; color:#22543d; }
+.np-feedback.wrong { border:1px solid #feb2b2; background:#fed7d7; color:#742a2a; }
+.np-hint-box { margin-top:.75rem; padding:.8rem; border:1px solid #faf089; border-radius:8px; background:#fefcbf; color:#744210; font-size:.9rem; }
