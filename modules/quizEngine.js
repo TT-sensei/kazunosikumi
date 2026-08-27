@@ -2,6 +2,7 @@ import { generateProblems, levelSettings, problemTypes } from './problemSets.js'
 import {
   getBadgeSummary,
   getNaviSrc,
+  NAVI_ORDER,
   publishNavi,
   recordQuizAnswer,
   recordQuizComplete
@@ -49,6 +50,11 @@ function escapeHtml(value) {
 export function initQuizEngine(root) {
   if (!root) return;
 
+  function pickNavi(exclude) {
+    const candidates = NAVI_ORDER.filter(character => character !== exclude);
+    return candidates[Math.floor(Math.random() * candidates.length)] || NAVI_ORDER[0];
+  }
+
   const state = {
     mode: 'setup',
     selectedLevel: 1,
@@ -63,7 +69,11 @@ export function initQuizEngine(root) {
     isAnswered: false,
     isCorrect: false,
     showHint: false,
-    validationMessage: ''
+    validationMessage: '',
+    setupNavi: pickNavi(),
+    naviCharacter: 'sora',
+    naviPose: 'welcome',
+    naviMessage: 'じっくり考えてみよう'
   };
 
   function render() {
@@ -83,7 +93,7 @@ export function initQuizEngine(root) {
     root.innerHTML = `
       <div class="np-quiz-wrapper np-setup-wrapper">
         <div class="np-setup-welcome">
-          <img src="${getNaviSrc('sora', 'welcome')}" alt="そらが数のしくみを案内しています">
+          <img src="${getNaviSrc(state.setupNavi, 'welcome')}" alt="${state.setupNavi}が数のしくみを案内しています">
           <div>
             <span class="np-kicker">NUMBER PARK CHALLENGE</span>
             <h3>今日は、どの問題に挑戦する？</h3>
@@ -155,7 +165,10 @@ export function initQuizEngine(root) {
     state.answersById = {};
     state.validationMessage = '';
     loadProblem();
-    publishNavi('sora', 'welcome', `${problemTypes.find(type => type.id === state.selectedType)?.title || '問題'}を10問、やってみよう！`);
+    state.naviCharacter = pickNavi();
+    state.naviPose = 'welcome';
+    state.naviMessage = (problemTypes.find(type => type.id === state.selectedType)?.title || '問題') + 'を10問、やってみよう！';
+    publishNavi(state.naviCharacter, state.naviPose, state.naviMessage);
   }
 
   function returnToSetup() {
@@ -165,7 +178,11 @@ export function initQuizEngine(root) {
     state.answersById = {};
     state.selectedType = null;
     state.validationMessage = '';
-    publishNavi('sora', 'welcome', '数のしくみを見つけにいこう！');
+    state.setupNavi = pickNavi();
+    state.naviCharacter = state.setupNavi;
+    state.naviPose = 'welcome';
+    state.naviMessage = '数のしくみを見つけにいこう！';
+    publishNavi(state.naviCharacter, state.naviPose, state.naviMessage);
     render();
   }
 
@@ -177,6 +194,12 @@ export function initQuizEngine(root) {
     const previousAnswer = current ? state.answersById[current.id] : undefined;
     state.isAnswered = previousAnswer !== undefined;
     state.isCorrect = previousAnswer === true;
+    if (!state.isAnswered && state.currentIndex > 0) {
+      state.naviCharacter = pickNavi(state.naviCharacter);
+      state.naviPose = 'welcome';
+      state.naviMessage = 'じっくり考えてみよう';
+      publishNavi(state.naviCharacter, state.naviPose, state.naviMessage);
+    }
 
     if (current?.extraData?.uiType === 'cards' && Array.isArray(current.extraData.digits)) {
       state.availableCards = [...current.extraData.digits];
@@ -204,12 +227,11 @@ export function initQuizEngine(root) {
     state.correctCount = Object.values(state.answersById).filter(Boolean).length;
     state.validationMessage = '';
     recordQuizAnswer({ correct: state.isCorrect, type: current.type });
-    if (state.isCorrect) {
-      playCorrectSound();
-      publishNavi('sora', 'correct', '正解！数の見方がつながったね！');
-    } else {
-      publishNavi('tsuki', 'retry', 'まちがいは発見のチャンス。もう一度見てみよう！');
-    }
+    state.naviCharacter = pickNavi(state.naviCharacter);
+    state.naviPose = state.isCorrect ? 'correct' : 'retry';
+    state.naviMessage = state.isCorrect ? '正解！数の見方がつながったね！' : 'まちがいは発見のチャンス。もう一度見てみよう！';
+    if (state.isCorrect) playCorrectSound();
+    publishNavi(state.naviCharacter, state.naviPose, state.naviMessage);
     render();
   }
 
@@ -226,7 +248,12 @@ export function initQuizEngine(root) {
       level: state.selectedLevel
     });
     state.mode = 'result';
-    publishNavi('sora', 'complete', `${state.correctCount}問正解！10問のチャレンジ、おつかれさま！`);
+    state.mode = 'result';
+    state.naviCharacter = pickNavi(state.naviCharacter);
+    state.naviPose = state.correctCount === state.problems.length ? 'complete' : 'correct';
+    state.naviMessage = state.correctCount + '問正解！10問のチャレンジ、おつかれさま！';
+    publishNavi(state.naviCharacter, state.naviPose, state.naviMessage);
+    render();
     render();
   }
 
@@ -236,9 +263,9 @@ export function initQuizEngine(root) {
     const total = state.problems.length;
     const progressPercent = Math.round(((state.currentIndex + 1) / total) * 100);
     const typeInfo = problemTypes.find(type => type.id === state.selectedType) || problemTypes[0];
-    const naviCharacter = state.isAnswered ? (state.isCorrect ? 'sora' : 'tsuki') : state.showHint ? 'kai' : 'sora';
-    const naviPose = state.isAnswered ? (state.isCorrect ? 'correct' : 'retry') : state.showHint ? 'hint' : 'welcome';
-    const naviMessage = state.isAnswered ? (state.isCorrect ? '正解！' : '答えを見直そう') : state.showHint ? 'ヒントを見て考えよう' : 'じっくり考えてみよう';
+    const naviCharacter = state.naviCharacter;
+    const naviPose = state.naviPose;
+    const naviMessage = state.naviMessage;
 
     root.innerHTML = `
       <div class="np-quiz-wrapper">
@@ -273,8 +300,8 @@ export function initQuizEngine(root) {
   function renderResult() {
     const total = state.problems.length;
     const percent = Math.round((state.correctCount / total) * 100);
-    const resultNavi = state.correctCount === total ? 'sora' : state.correctCount >= 7 ? 'tsuki' : 'kai';
-    const resultPose = state.correctCount === total ? 'complete' : state.correctCount >= 7 ? 'correct' : 'hint';
+    const resultNavi = state.naviCharacter;
+    const resultPose = state.naviPose;
     root.innerHTML = `
       <div class="np-quiz-wrapper np-result-wrapper">
         <div class="np-result-hero"><img src="${getNaviSrc(resultNavi, resultPose)}" alt="チャレンジ結果を応援するナビキャラ"><div><span class="np-kicker">CHALLENGE COMPLETE</span><h3>${state.correctCount === total ? 'パーフェクト！' : 'チャレンジ完了！'}</h3><p>選んだ「${problemTypes.find(type => type.id === state.selectedType)?.title || ''}」を10問やりきったね。</p></div></div>
@@ -334,7 +361,10 @@ export function initQuizEngine(root) {
     });
     root.querySelector('#np-btn-hint')?.addEventListener('click', () => {
       state.showHint = !state.showHint;
-      publishNavi('kai', 'hint', state.showHint ? 'ヒントを見ながら考えてみよう！' : '自分の力でもう一度考えてみよう！');
+      state.naviCharacter = pickNavi(state.naviCharacter);
+      state.naviPose = state.showHint ? 'hint' : 'welcome';
+      state.naviMessage = state.showHint ? 'ヒントを見ながら考えてみよう！' : '自分の力でもう一度考えてみよう！';
+      publishNavi(state.naviCharacter, state.naviPose, state.naviMessage);
       render();
     });
     root.querySelector('#np-btn-check')?.addEventListener('click', () => {
