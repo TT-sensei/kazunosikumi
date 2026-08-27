@@ -7,6 +7,14 @@ const smallUnits = [
   { value: 1, label: '' }
 ];
 
+export const problemTypes = [
+  { id: '読み書き・位取り', title: '読み書き・位取り', description: '数字と漢字、位の見方', icon: '🔤', color: '#2563eb' },
+  { id: '構成・相対的な大きさ', title: '数の構成', description: 'まとまりと数の関係', icon: '🧱', color: '#16a34a' },
+  { id: '10倍・100倍・1/10', title: '10倍・100倍・1/10', description: '位が動くと数はどう変わる？', icon: '↗️', color: '#9333ea' },
+  { id: '数直線・前後・大小比較', title: '数直線・大小比較', description: '前後や数の大きさを考える', icon: '📏', color: '#ea580c' },
+  { id: '思考力・カード問題', title: 'カード問題', description: '数字カードを組み合わせる', icon: '🃏', color: '#db2777' }
+];
+
 export const levelSettings = {
   1: { label: 'レベル1（小2：1000〜10000）', min: 1000, max: 10000, cardDigits: 4, target: 7000 },
   2: { label: 'レベル2（小3：万〜1億）', min: 10000, max: 100000000, cardDigits: 5, target: 50000 }
@@ -193,13 +201,17 @@ function buildProblemPool(level) {
   ];
 }
 
-export function generateProblems(level = 1, size = 20) {
-  const required = buildProblemPool(level);
-  const extras = [];
-  while (required.length + extras.length < size) {
-    extras.push(...shuffle(buildProblemPool(level)));
+export function generateProblems(level = 1, size = 10, type = 'all') {
+  const fullPool = buildProblemPool(level);
+  const filteredPool = type && type !== 'all'
+    ? fullPool.filter(problem => problem.type === type)
+    : fullPool;
+  const sourcePool = filteredPool.length ? filteredPool : fullPool;
+  const problems = [];
+  while (problems.length < size) {
+    problems.push(...shuffle(sourcePool));
   }
-  return shuffle([...required, ...extras.slice(0, Math.max(0, size - required.length))])
+  return shuffle(problems)
     .slice(0, size)
     .map((problem, index) => ({ ...problem, id: index + 1 }));
 }
