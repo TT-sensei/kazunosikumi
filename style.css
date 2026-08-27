@@ -382,3 +382,15 @@ label {
 .np-feedback.correct { border:1px solid #9ae6b4; background:#c6f6d5; color:#22543d; }
 .np-feedback.wrong { border:1px solid #feb2b2; background:#fed7d7; color:#742a2a; }
 .np-hint-box { margin-top:.75rem; padding:.8rem; border:1px solid #faf089; border-radius:8px; background:#fefcbf; color:#744210; font-size:.9rem; }
+
+/* Header title and rotating daily Navi scene */
+.app-header-main { display:grid; grid-template-columns:minmax(0,1fr) minmax(230px,42%); align-items:center; gap:20px; max-width:980px; margin:0 auto; text-align:left; }
+.app-title-block > p { max-width:720px; margin:0; }
+#navi-daily-root { min-width:0; }
+.np-daily-group { display:flex; align-items:center; justify-content:center; margin:0; }
+.np-daily-group img { display:block; width:100%; height:clamp(126px,18vw,190px); object-fit:contain; }
+@media (max-width:680px) {
+  .app-header-main { grid-template-columns:minmax(0,1fr) minmax(135px,40%); gap:8px; }
+  .app-title-block h1 { font-size:clamp(1.65rem,6.5vw,2.7rem); }
+  .np-daily-group img { height:clamp(108px,26vw,145px); }
+}
