@@ -4,7 +4,7 @@ import { initNumberLine } from './modules/numberLine.js';
 import { initComparison } from './modules/comparison.js';
 import { initUnitGrouping } from './modules/unitGrouping.js';
 import { initQuizEngine } from './modules/quizEngine.js';
-import { initBadgeCollection, initNavi } from './modules/numberParkFeatures.js';
+import { initBadgeCollection, initDailyNaviGroup } from './modules/numberParkFeatures.js';
 
 const tabs = document.querySelectorAll('.tab');
 const panels = document.querySelectorAll('.panel');
@@ -18,7 +18,7 @@ tabs.forEach(tab => {
   });
 });
 
-initNavi(document.getElementById('navi-root'));
+initDailyNaviGroup(document.getElementById('navi-daily-root'));
 initBadgeCollection(document.getElementById('badge-root'));
 initPlaceValueComposer(document.getElementById('composer-root'));
 initPlaceValueDecomposer(document.getElementById('decomposer-root'));
