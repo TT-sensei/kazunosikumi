@@ -10,47 +10,48 @@
   <header class="app-header">
     <p class="eyebrow">小学校2〜3年生向け</p>
     <h1>number-park <span>すうじパーク</span></h1>
-    <p>チャレンジを中心に、無限ドリルで位取り・大きな数を練習します。感覚を学ぶコーナーも残しています。</p>
+    <p>数をつくる・分ける・くらべる。操作しながら、大きな数のしくみを見つけよう。</p>
+    <div id="navi-root"></div>
   </header>
 
   <nav class="tabs" aria-label="学習メニュー">
-    <button class="tab is-active" data-tab="quiz">チャレンジ（問題練習）</button>
-    <button class="tab" data-tab="composer">感覚：数をつくる</button>
-    <button class="tab" data-tab="decomposer">感覚：数を分ける</button>
-    <button class="tab" data-tab="number-line">感覚：数のならび</button>
-    <button class="tab" data-tab="comparison">感覚：大きさくらべ</button>
-    <button class="tab" data-tab="grouping">感覚：いくつ分</button>
+    <button class="tab is-active" data-tab="quiz">チャレンジ</button>
+    <button class="tab" data-tab="composer">数をつくる</button>
+    <button class="tab" data-tab="decomposer">数を分ける</button>
+    <button class="tab" data-tab="number-line">数のならび</button>
+    <button class="tab" data-tab="comparison">大きさくらべ</button>
+    <button class="tab" data-tab="grouping">いくつ分</button>
+    <button class="tab tab-collection" data-tab="badges">🏅 バッジ</button>
   </nav>
 
   <main class="app-shell">
+    <section id="quiz" class="panel is-active" aria-labelledby="quiz-title">
+      <h2 id="quiz-title">チャレンジ（10問）</h2>
+      <div id="quiz-root"></div>
+    </section>
     <section id="composer" class="panel" aria-labelledby="composer-title">
       <h2 id="composer-title">数をつくる（構成）</h2>
       <div id="composer-root"></div>
     </section>
-
     <section id="decomposer" class="panel" aria-labelledby="decomposer-title">
       <h2 id="decomposer-title">数を分ける（分解）</h2>
       <div id="decomposer-root"></div>
     </section>
-
     <section id="number-line" class="panel" aria-labelledby="number-line-title">
       <h2 id="number-line-title">数のならび（数直線）</h2>
       <div id="number-line-root"></div>
     </section>
-
     <section id="comparison" class="panel" aria-labelledby="comparison-title">
       <h2 id="comparison-title">大きさくらべ</h2>
       <div id="comparison-root"></div>
     </section>
-
     <section id="grouping" class="panel" aria-labelledby="grouping-title">
       <h2 id="grouping-title">いくつ分（単位）</h2>
       <div id="grouping-root"></div>
     </section>
-
-    <section id="quiz" class="panel is-active" aria-labelledby="quiz-title">
-      <h2 id="quiz-title">チャレンジ（問題練習）</h2>
-      <div id="quiz-root"></div>
+    <section id="badges" class="panel" aria-labelledby="badges-title">
+      <h2 id="badges-title">バッジコレクション</h2>
+      <div id="badge-root"></div>
     </section>
   </main>
 
