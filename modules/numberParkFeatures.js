@@ -34,14 +34,46 @@ export const NAVI_ASSETS = {
       retry: 'fullbody/retry.webp',
       complete: 'fullbody/complete.webp'
     }
+  },
+  riku: {
+    name: 'りく', color: '#1e3a8a',
+    poses: { welcome: 'fullbody/waving.webp', correct: 'fullbody/correct.webp', hint: 'fullbody/hint.webp', retry: 'fullbody/retry.webp', complete: 'fullbody/complete.webp' }
+  },
+  nami: {
+    name: 'なみ', color: '#0f766e',
+    poses: { welcome: 'fullbody/waving.webp', correct: 'fullbody/correct.webp', hint: 'fullbody/hint.webp', retry: 'fullbody/retry.webp', complete: 'fullbody/complete.webp' }
+  },
+  saku: {
+    name: 'さく', color: '#be185d',
+    poses: { welcome: 'fullbody/waving.webp', correct: 'fullbody/correct.webp', hint: 'fullbody/hint.webp', retry: 'fullbody/retry.webp', complete: 'fullbody/complete.webp' }
   }
 };
 
+export const NAVI_ORDER = ['riku', 'sora', 'kai', 'saku', 'tsuki', 'nami'];
+
 export function getNaviSrc(character = 'sora', pose = 'welcome') {
-  const navi = NAVI_ASSETS[character] || NAVI_ASSETS.sora;
-  return `${NAVI_BASE}${character}/${navi.poses[pose] || navi.poses.welcome}`;
+  const characterKey = NAVI_ASSETS[character] ? character : 'sora';
+  const navi = NAVI_ASSETS[characterKey];
+  return `${NAVI_BASE}${characterKey}/${navi.poses[pose] || navi.poses.welcome}`;
 }
 
+const DAILY_GROUP_ASSETS = [
+  { file: 'group-daily-arrival.webp', label: '登校する六人' },
+  { file: 'group-daily-classroom.webp', label: '教室で過ごす六人' },
+  { file: 'group-daily-cleanup.webp', label: '掃除をする六人' },
+  { file: 'group-daily-recess.webp', label: '休み時間の六人' },
+  { file: 'group-daily-study.webp', label: '学習する六人' }
+];
+
+function randomItem(items) {
+  return items[Math.floor(Math.random() * items.length)];
+}
+
+export function initDailyNaviGroup(root) {
+  if (!root) return;
+  const scene = randomItem(DAILY_GROUP_ASSETS);
+  root.innerHTML = '<figure class="np-daily-group"><img src="https://tt-sensei.github.io/navi-character-/assets/web/groups/daily/' + scene.file + '" alt="' + scene.label + '｜ナビキャラ6人の日常風景" loading="eager"></figure>';
+}
 export function publishNavi(character, pose, message) {
   window.dispatchEvent(new CustomEvent('numberpark:navi', {
     detail: { character, pose, message }
