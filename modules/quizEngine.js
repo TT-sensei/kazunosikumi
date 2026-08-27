@@ -1,6 +1,7 @@
 import { generateProblems, levelSettings, problemTypes } from './problemSets.js';
 import {
   getBadgeSummary,
+  NAVI_ASSETS,
   getNaviSrc,
   NAVI_ORDER,
   publishNavi,
@@ -55,6 +56,10 @@ export function initQuizEngine(root) {
     return candidates[Math.floor(Math.random() * candidates.length)] || NAVI_ORDER[0];
   }
 
+  function getNaviName(character) {
+    return NAVI_ASSETS[character]?.name || character;
+  }
+
   const state = {
     mode: 'setup',
     selectedLevel: 1,
@@ -93,7 +98,7 @@ export function initQuizEngine(root) {
     root.innerHTML = `
       <div class="np-quiz-wrapper np-setup-wrapper">
         <div class="np-setup-welcome">
-          <img src="${getNaviSrc(state.setupNavi, 'welcome')}" alt="${state.setupNavi}が数のしくみを案内しています">
+          <img src="${getNaviSrc(state.setupNavi, 'welcome')}" alt="${getNaviName(state.setupNavi)}が数のしくみを案内しています">
           <div>
             <span class="np-kicker">NUMBER PARK CHALLENGE</span>
             <h3>今日は、どの問題に挑戦する？</h3>
@@ -164,10 +169,10 @@ export function initQuizEngine(root) {
     state.correctCount = 0;
     state.answersById = {};
     state.validationMessage = '';
-    loadProblem();
     state.naviCharacter = pickNavi();
     state.naviPose = 'welcome';
     state.naviMessage = (problemTypes.find(type => type.id === state.selectedType)?.title || '問題') + 'を10問、やってみよう！';
+    loadProblem();
     publishNavi(state.naviCharacter, state.naviPose, state.naviMessage);
   }
 
@@ -248,12 +253,10 @@ export function initQuizEngine(root) {
       level: state.selectedLevel
     });
     state.mode = 'result';
-    state.mode = 'result';
     state.naviCharacter = pickNavi(state.naviCharacter);
     state.naviPose = state.correctCount === state.problems.length ? 'complete' : 'correct';
     state.naviMessage = state.correctCount + '問正解！10問のチャレンジ、おつかれさま！';
     publishNavi(state.naviCharacter, state.naviPose, state.naviMessage);
-    render();
     render();
   }
 
@@ -275,7 +278,7 @@ export function initQuizEngine(root) {
         </div>
         <div class="np-progress-box"><div class="np-progress-info"><span>問題 ${state.currentIndex + 1} / ${total}</span><span>⭐ 正解：${state.correctCount}問</span></div><div class="np-progress-bar"><div class="np-progress-fill" style="width:${progressPercent}%"></div></div></div>
 
-        <div class="np-quiz-navi"><img src="${getNaviSrc(naviCharacter, naviPose)}" alt="${naviCharacter === 'sora' ? 'そら' : naviCharacter === 'tsuki' ? 'つき' : 'かい'}｜${naviMessage}"><span>${naviMessage}</span></div>
+        <div class="np-quiz-navi"><img src="${getNaviSrc(naviCharacter, naviPose)}" alt="${getNaviName(naviCharacter)}｜${naviMessage}"><span>${naviMessage}</span></div>
         <div class="np-card">
           <div class="np-meta"><span class="np-badge-type">${typeInfo.icon} ${current.type}</span><span class="np-badge-diff">${current.difficulty}</span></div>
           <div class="np-question-text">問${state.currentIndex + 1}. ${current.question}</div>
