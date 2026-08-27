@@ -237,3 +237,102 @@ label {
 @media (max-width: 640px) {
   .quiz-toolbar { grid-template-columns: 1fr; }
 }
+
+.app-header { padding-bottom: 10px; }
+.app-header > p:not(.eyebrow) { max-width: 720px; margin-inline: auto; }
+.tab-collection { background: #fef3c7; }
+.np-navi-party { position: relative; display: flex; align-items: end; justify-content: center; gap: 10px; min-height: 142px; max-width: 620px; margin: 8px auto 0; }
+.np-navi-side { width: 56px; height: 74px; object-fit: contain; opacity: .5; filter: saturate(.8); }
+.np-navi-side.is-selected { opacity: .88; transform: translateY(-4px); }
+.np-navi-main { display: flex; align-items: center; gap: 12px; min-width: min(360px, 78vw); text-align: left; }
+.np-navi-main > img { width: 102px; height: 128px; object-fit: contain; align-self: end; }
+.np-navi-bubble { padding: 12px 16px; border: 3px solid #bfdbfe; border-radius: 20px; background: #fff; box-shadow: 0 8px 18px rgba(36,48,71,.1); }
+.np-navi-bubble strong, .np-navi-bubble span { display: block; }
+.np-navi-bubble strong { color: #2563eb; }
+.np-navi-bubble span { margin-top: 4px; font-weight: 700; }
+.np-quiz-wrapper { max-width: 760px; }
+.np-setup-wrapper { background: linear-gradient(145deg,#eff6ff,#fff); }
+.np-setup-welcome, .np-result-hero { display: flex; align-items: center; gap: 18px; padding: 12px 16px 18px; border-bottom: 2px solid #dbeafe; }
+.np-setup-welcome img, .np-result-hero img { width: 100px; height: 124px; object-fit: contain; align-self: end; }
+.np-setup-welcome h3, .np-result-hero h3 { margin: 5px 0; font-size: clamp(1.3rem,4vw,2rem); }
+.np-setup-welcome p, .np-result-hero p { margin: 0; font-weight: 700; color: #475569; }
+.np-kicker { display: inline-block; color: #2563eb; font-size: .72rem; font-weight: 900; letter-spacing: .08em; }
+.np-choice-section { margin-top: 20px; }
+.np-choice-title { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.np-choice-title > span { display: grid; place-items: center; width: 31px; height: 31px; border-radius: 50%; background: #2563eb; color: #fff; font-weight: 900; }
+.np-choice-title strong, .np-choice-title small { display: block; }
+.np-choice-title small { margin-top: 3px; color: #64748b; font-weight: 700; }
+.np-selection-grid { display: grid; gap: 10px; }
+.np-level-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+.np-type-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+.np-selection-card { display: grid; gap: 5px; min-height: 110px; padding: 13px; border: 3px solid #dbeafe; border-radius: 17px; background: #fff; text-align: left; box-shadow: 0 5px 12px rgba(36,48,71,.06); }
+.np-selection-card:hover { transform: translateY(-2px); }
+.np-selection-card.is-selected { border-color: var(--type-color,#2563eb); background: #eff6ff; box-shadow: 0 0 0 3px color-mix(in srgb, var(--type-color,#2563eb) 20%, transparent); }
+.np-selection-card strong { font-size: 1.03rem; }
+.np-selection-card span { color: #475569; font-size: .83rem; font-weight: 700; }
+.np-selection-card i { color: var(--type-color,#2563eb); font-size: .78rem; font-style: normal; font-weight: 900; }
+.np-type-card > b { font-size: 1.65rem; line-height: 1; }
+.np-setup-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 22px; padding-top: 16px; border-top: 2px solid #dbeafe; }
+.np-collection-mini { font-weight: 900; color: #92400e; }
+.np-start-btn { min-width: 235px; }
+.np-start-btn:disabled { cursor: not-allowed; opacity: .45; }
+.np-validation { margin: 12px 0 0; padding: 10px 13px; border-radius: 12px; background: #fee2e2; color: #991b1b; font-weight: 800; }
+.np-quiz-topbar { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 14px; }
+.np-quiz-topbar strong { display: block; margin-top: 4px; }
+.np-quiz-top-actions { display: flex; flex-wrap: wrap; justify-content: end; gap: 6px; }
+.np-small-btn { min-height: 38px; padding: 7px 11px; border: 2px solid #cbd5e1; border-radius: 11px; background: #f8fafc; font-size: .78rem; font-weight: 800; }
+.np-quiz-navi { display: flex; align-items: center; gap: 10px; min-height: 76px; margin-bottom: 10px; padding: 6px 12px; border-radius: 16px; background: #f0fdf4; color: #166534; font-weight: 900; }
+.np-quiz-navi img { width: 58px; height: 68px; object-fit: contain; align-self: end; }
+.np-card { border-color: #bfdbfe; }
+.np-input-instruction { margin-bottom: 9px; color: #64748b; font-size: .85rem; font-weight: 800; }
+.np-actions { align-items: stretch; }
+.np-btn:disabled { cursor: not-allowed; opacity: .45; }
+.np-badge-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.np-badge-head h2 { margin: 4px 0; }
+.np-badge-head p { margin: 0; color: #475569; font-weight: 700; }
+.np-badge-count { display: grid; place-items: center; min-width: 92px; padding: 10px; border: 3px solid #f59e0b; border-radius: 18px; background: #fffbeb; color: #92400e; }
+.np-badge-count strong { font-size: 2rem; line-height: 1; }
+.np-badge-count span { font-weight: 900; }
+.np-badge-stats { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+.np-badge-stats span { padding: 7px 10px; border-radius: 999px; background: #fef3c7; color: #78350f; font-size: .83rem; font-weight: 900; }
+.np-badge-grid { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 12px; }
+.np-badge-card { min-height: 164px; padding: 9px 7px; border: 2px solid #fde68a; border-radius: 16px; background: linear-gradient(160deg,#fff,#fffbeb); text-align: center; }
+.np-badge-card strong, .np-badge-card small { display: block; }
+.np-badge-card strong { font-size: .78rem; }
+.np-badge-card small { margin-top: 4px; color: #64748b; font-size: .67rem; line-height: 1.35; }
+.np-badge-image-wrap { display: grid; place-items: center; height: 91px; }
+.np-badge-card img { width: 82px; height: 82px; object-fit: contain; }
+.np-badge-card.is-locked { border-color: #e2e8f0; background: #f8fafc; }
+.np-badge-card.is-locked img { filter: grayscale(1) brightness(.65); opacity: .35; }
+.np-badge-toast { position: fixed; right: 18px; bottom: 18px; z-index: 10; display: grid; gap: 3px; padding: 14px 18px; border: 3px solid #f59e0b; border-radius: 17px; background: #fff; box-shadow: 0 15px 30px rgba(36,48,71,.2); animation: np-toast-in .25s ease-out; }
+.np-badge-toast span { color: #92400e; font-size: .8rem; font-weight: 900; }
+.np-badge-toast strong { color: #1e3a8a; }
+.np-score { display: flex; align-items: baseline; justify-content: center; gap: 8px; margin: 20px 0; color: #1e3a8a; }
+.np-score strong { font-size: 4rem; line-height: 1; }
+.np-score span { font-size: 1.2rem; font-weight: 900; }
+.np-score b { margin-left: 8px; padding: 6px 10px; border-radius: 999px; background: #dcfce7; color: #166534; }
+.np-result-message { padding: 14px; border-radius: 15px; background: #fef3c7; text-align: center; font-weight: 900; }
+.np-result-answers { margin-top: 18px; }
+.np-result-answers h3 { margin-bottom: 8px; }
+.np-result-answers > div { display: grid; grid-template-columns: 28px 52px 1fr; gap: 8px; align-items: center; padding: 7px 9px; border-bottom: 1px solid #e2e8f0; }
+.np-result-answers small { color: #64748b; }
+.is-correct { color: #16a34a; font-size: 1.2rem; font-weight: 900; }
+.is-wrong { color: #f97316; font-size: 1.2rem; font-weight: 900; }
+.np-result-actions { display: flex; gap: 10px; margin-top: 18px; }
+.np-result-actions .np-btn { flex: 1; }
+@keyframes np-toast-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 680px) {
+  .np-type-grid, .np-badge-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .np-setup-footer, .np-quiz-topbar { align-items: stretch; flex-direction: column; }
+  .np-start-btn { width: 100%; }
+  .np-quiz-top-actions { justify-content: start; }
+  .np-actions { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .np-result-actions { flex-direction: column; }
+}
+@media (max-width: 430px) {
+  .np-setup-welcome, .np-result-hero { align-items: start; gap: 8px; padding-inline: 4px; }
+  .np-setup-welcome img, .np-result-hero img { width: 75px; height: 105px; }
+  .np-navi-side { width: 42px; }
+  .np-navi-main > img { width: 82px; }
+  .np-navi-bubble { padding: 9px 10px; }
+}
