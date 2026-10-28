@@ -145,6 +145,20 @@ export function initNumberLine(root) {
         border: 1px solid #bee3f8;
         line-height: 1.6;
       }
+      /* タブレット・スマートフォンでの操作性 */
+      .number-park-line .input-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .number-park-line .input-grid select { width: 100%; min-height: 48px; }
+      .number-park-line .input-grid input[type="range"] { width: 100%; min-height: 48px; touch-action: pan-y; }
+      .number-park-line .line-container { overflow-x: auto; }
+      .number-park-line .line-container svg { min-width: 520px; }
+      @media (max-width: 560px) {
+        .number-park-line { padding: .5rem; }
+        .number-park-line .input-grid { grid-template-columns: 1fr; gap: .75rem; padding: .9rem; }
+        .number-park-line .line-container { padding: .6rem .25rem; }
+        .number-park-line .line-container svg { min-width: 600px; }
+        .number-park-line .cards-display { gap: .4rem; padding: .85rem .4rem; }
+        .number-park-line .card { min-width: 78px; padding: .65rem .55rem; }
+      }
     </style>
 
     <div class="number-park-line">
