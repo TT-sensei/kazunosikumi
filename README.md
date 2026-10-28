@@ -13,6 +13,7 @@ HTML / CSS / JavaScript（Vanilla）だけで作られているため、ビル�
 ## 各機能
 
 - **数をつくる（構成）**: `+100` / `+10` / `+1` ボタンで数を作り、「100が3こ、10が2こ、1が0こ」のように表示します。
+- **シュシュっとかず作り**: 1・10・100・1000の手裏剣やエネルギー弾を投げて目標の数を作ります。ぴったりモードとお宝モード、投げた数の記録、1手戻す操作、位ごとの分解表示があります。
 - **数を分ける（分解）**: 入力した数を、100・10・1のまとまりに分けて表示します。
 - **数のならび（数直線）**: スライダーと、とび数（1 / 2 / 5 / 10 / 50 / 100）で数直線上のジャンプを確認します。
 - **大きさくらべ**: 2つの数を比較し、「○○は△△より□□大きい」と差分を言語化します。
@@ -27,6 +28,7 @@ HTML / CSS / JavaScript（Vanilla）だけで作られているため、ビル�
 number-park/
 ├── index.html
 ├── style.css
+├── shushutto.css
 ├── app.js
 ├── modules/
 │   ├── placeValueComposer.js
@@ -34,6 +36,7 @@ number-park/
 │   ├── numberLine.js
 │   ├── comparison.js
 │   ├── unitGrouping.js
+│   ├── shushuttoGame.js
 │   ├── quizEngine.js
 │   └── problemSets.js
 └── README.md
@@ -67,7 +70,7 @@ python3 -m http.server 8000
 
 ## サウンド
 
-音声ファイルは使いません。正解音は `modules/quizEngine.js` の Web Audio API で生成しています。
+音声ファイルは使いません。正解音は `modules/quizEngine.js` の Web Audio API で生成しています。シュシュっとかず作りは外部音声を使わず、CSSの飛翔演出で手裏剣の動きを表現します。
 
 ## 公開ページ
 
