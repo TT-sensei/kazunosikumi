@@ -5,6 +5,7 @@ import { initComparison } from './modules/comparison.js';
 import { initUnitGrouping } from './modules/unitGrouping.js';
 import { initQuizEngine } from './modules/quizEngine.js';
 import { initBadgeCollection, initDailyNaviGroup } from './modules/numberParkFeatures.js';
+import { initShushuttoGame } from './modules/shushuttoGame.js';
 
 const tabs = document.querySelectorAll('.tab');
 const panels = document.querySelectorAll('.panel');
@@ -21,6 +22,7 @@ tabs.forEach(tab => {
 initDailyNaviGroup(document.getElementById('navi-daily-root'));
 initBadgeCollection(document.getElementById('badge-root'));
 initPlaceValueComposer(document.getElementById('composer-root'));
+initShushuttoGame(document.getElementById('shushutto-root'));
 initPlaceValueDecomposer(document.getElementById('decomposer-root'));
 initNumberLine(document.getElementById('number-line-root'));
 initComparison(document.getElementById('comparison-root'));

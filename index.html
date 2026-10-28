@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>number-park（すうじパーク）</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="shushutto.css">
 </head>
 <body>
   <header class="app-header">
@@ -21,6 +22,7 @@
   <nav class="tabs" aria-label="学習メニュー">
     <button class="tab is-active" data-tab="quiz">チャレンジ</button>
     <button class="tab" data-tab="composer">数をつくる</button>
+    <button class="tab tab-shushutto" data-tab="shushutto">✦ シュシュっと</button>
     <button class="tab" data-tab="decomposer">数を分ける</button>
     <button class="tab" data-tab="number-line">数のならび</button>
     <button class="tab" data-tab="comparison">大きさくらべ</button>
@@ -36,6 +38,10 @@
     <section id="composer" class="panel" aria-labelledby="composer-title">
       <h2 id="composer-title">数をつくる（構成）</h2>
       <div id="composer-root"></div>
+    </section>
+    <section id="shushutto" class="panel" aria-labelledby="shushutto-title">
+      <h2 id="shushutto-title">シュシュっとかず作り</h2>
+      <div id="shushutto-root"></div>
     </section>
     <section id="decomposer" class="panel" aria-labelledby="decomposer-title">
       <h2 id="decomposer-title">数を分ける（分解）</h2>
