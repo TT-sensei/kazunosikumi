@@ -149,6 +149,19 @@ export function initUnitGrouping(root) {
         color: #744210;
         border: 1px solid #feebc8;
       }
+      /* タブレット・スマートフォンでの操作性 */
+      .number-park .input-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .number-park .input-grid input, .number-park .input-grid select { width: 100%; min-height: 48px; }
+      .number-park .cards-display { gap: .5rem; }
+      .number-park .card { min-width: 88px; max-width: 100%; }
+      @media (max-width: 560px) {
+        .number-park { padding: .5rem; }
+        .number-park .input-grid { grid-template-columns: 1fr; gap: .75rem; padding: .9rem; }
+        .number-park .cards-display { justify-content: stretch; padding: .85rem .4rem; }
+        .number-park .card { flex: 1 1 120px; min-width: 0; padding: .65rem .5rem; }
+        .number-park .card-value { font-size: 1.1rem; overflow-wrap: anywhere; }
+        .number-park .operator { font-size: 1rem; }
+      }
     </style>
 
     <div class="number-park">
