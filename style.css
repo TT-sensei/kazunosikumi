@@ -394,3 +394,34 @@ label {
   .app-title-block h1 { font-size:clamp(1.65rem,6.5vw,2.7rem); }
   .np-daily-group img { height:clamp(108px,26vw,145px); }
 }
+
+/* ふりがな切り替え */
+.app-tools {
+  display: flex;
+  justify-content: flex-end;
+  max-width: 1080px;
+  margin: 10px auto 0;
+  padding: 0 4px;
+}
+
+.furigana-toggle {
+  border: 2px solid var(--blue);
+  background: #ffffff;
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 6px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.furigana-toggle.is-off {
+  border-color: #cbd5e0;
+  color: #718096;
+}
+
+ruby.np-furi rt {
+  font-size: 0.56em;
+  font-weight: 600;
+  color: #64748b;
+}
