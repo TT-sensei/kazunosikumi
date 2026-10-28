@@ -11,13 +11,17 @@ import { initFurigana } from './modules/furigana.js';
 const tabs = document.querySelectorAll('.tab');
 const panels = document.querySelectorAll('.panel');
 
-tabs.forEach(tab => {
-  tab.addEventListener('click', () => {
-    tabs.forEach(item => item.classList.remove('is-active'));
-    panels.forEach(panel => panel.classList.remove('is-active'));
-    tab.classList.add('is-active');
-    document.getElementById(tab.dataset.tab)?.classList.add('is-active');
+function activateTab(tab) {
+  tabs.forEach(item => {
+    const active = item === tab;
+    item.classList.toggle('is-active', active);
+    item.setAttribute('aria-pressed', String(active));
   });
+  panels.forEach(panel => panel.classList.toggle('is-active', panel.id === tab.dataset.tab));
+}
+
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => activateTab(tab));
 });
 
 initDailyNaviGroup(document.getElementById('navi-daily-root'));
