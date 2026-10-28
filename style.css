@@ -598,3 +598,17 @@ input, select {
 @media (prefers-reduced-motion: reduce) {
   .tab, button { transition: none; }
 }
+
+
+/* UX改善：モバイルでメニューが画面を占有しないようにする */
+@media (max-width: 900px) {
+  .tabs {
+    position: relative;
+    top: auto;
+    max-height: none;
+    overflow: visible;
+    backdrop-filter: none;
+  }
+}
+
+.tab[aria-pressed="true"] { font-weight: 900; }
