@@ -111,3 +111,35 @@
   .sg-projectile.is-flying { animation-duration: .01ms; }
   .sg-throw-btn { transition: none; }
 }
+
+
+/* Feedback update: fantasy Riku, live total, progress and sound toggle */
+.sg-riku-portrait { display:block; flex:0 0 auto; width:clamp(88px,15vw,142px); max-height:168px; object-fit:contain; object-position:center bottom; filter:drop-shadow(0 8px 7px #0c4a6e30); }
+.sg-scene-riku { position:absolute; z-index:2; left:0; bottom:0; width:clamp(110px,24vw,180px); max-height:78%; object-fit:contain; object-position:left bottom; filter:drop-shadow(0 7px 8px #001e3a88); }
+.sg-now-card { margin-top:12px; max-width:310px; padding:12px 14px; border:1px solid #bae6fd; border-radius:16px; background:#f0f9ff; color:#0c4a6e; box-shadow:0 5px 18px #001e3a30; }
+.sg-now-card > span:first-child { display:block; font-size:.82rem; font-weight:900; color:#0369a1; }
+.sg-current-number { display:inline-block; font-size:clamp(2rem,5vw,3.1rem); line-height:1.1; font-weight:1000; letter-spacing:-.035em; font-variant-numeric:tabular-nums; }
+.sg-total-denom { margin-left:5px; color:#64748b; font-size:1rem; font-weight:850; }
+.sg-progress-track { height:9px; overflow:hidden; margin-top:8px; border-radius:999px; background:#cbd5e1; }
+.sg-progress-track > span { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg,#22d3ee,#34d399); transition:width .32s cubic-bezier(.2,.8,.2,1); }
+.sg-remaining { margin:6px 0 0; font-size:.92rem; font-weight:850; }
+.sg-remaining b { font-size:1.2rem; }
+.sg-flying-total { min-height:0; height:0; overflow:hidden; opacity:0; color:#0369a1; font-size:1rem; font-weight:1000; }
+.sg-flying-total.is-visible { height:auto; margin-top:5px; opacity:1; animation:sg-total-arrive .65s ease-out both; }
+.sg-number-pop { animation:sg-number-pop .34s ease-out; }
+.sg-sound-toggle { min-height:42px; padding:8px 13px; border:2px solid #bfdbfe; border-radius:13px; background:#fff; color:#1e40af; font-weight:900; }
+.sg-scene.sg-impact::after { animation:sg-impact-flash .24s ease-out; }
+.sg-scene.sg-impact-over { border-color:#fdba74; }
+.sg-scene.sg-impact-over::after { background:#fb923c55; }
+@keyframes sg-total-arrive { 0% { transform:translateY(8px) scale(.92); opacity:0; } 70% { transform:translateY(-2px) scale(1.04); opacity:1; } 100% { transform:translateY(0) scale(1); opacity:1; } }
+@keyframes sg-number-pop { 0% { transform:scale(1); } 45% { transform:scale(1.13); color:#0891b2; } 100% { transform:scale(1); } }
+@keyframes sg-impact-flash { 0% { box-shadow:inset 0 0 0 0 #fef08a00; } 40% { box-shadow:inset 0 0 0 8px #fef08a88; } 100% { box-shadow:inset 0 0 0 0 #fef08a00; } }
+@media (max-width:700px) {
+  .sg-riku-portrait { width:76px; max-height:124px; }
+  .sg-scene-riku { width:clamp(95px,26vw,132px); }
+  .sg-now-card { padding:9px 10px; }
+  .sg-sound-toggle { align-self:flex-start; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .sg-progress-track > span, .sg-flying-total.is-visible, .sg-number-pop { animation:none; transition:none; }
+}
