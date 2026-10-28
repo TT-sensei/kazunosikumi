@@ -76,7 +76,7 @@
 .sg-action-gold { background: #fef3c7; color: #92400e; }
 .sg-footnote { margin: 0; color: #64748b; font-size: .82rem; line-height: 1.5; }
 @keyframes sg-float { 0%,100% { transform: translateY(0) rotate(0deg); opacity:.45; } 50% { transform: translateY(-8px) rotate(12deg); opacity:1; } }
-@keyframes sg-shoot { 0% { opacity:1; transform:translate(0,0) scale(.55) rotate(-35deg); } 65% { opacity:1; transform:translate(23vw,-88px) scale(1.05) rotate(300deg); } 100% { opacity:0; transform:translate(31vw,-75px) scale(.45) rotate(480deg); } }
+@keyframes sg-shoot { 0% { opacity:1; transform:translate(0,0) scale(.55) rotate(-35deg); } 65% { opacity:1; transform:translate(43vw,-88px) scale(1.05) rotate(300deg); } 100% { opacity:0; transform:translate(55vw,-75px) scale(.45) rotate(480deg); } }
 @media (max-width: 700px) {
   .sg-intro { align-items: flex-start; padding: 15px; }
   .sg-ninja-mark { flex-basis: 58px; width: 58px; height: 58px; border-radius: 18px; font-size: 2rem; }
@@ -86,10 +86,13 @@
   .sg-throw-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .sg-throw-btn { min-height: 105px; }
   .sg-breakdown { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .sg-projectile.is-flying { animation-name: sg-shoot-mobile; }
 }
+@keyframes sg-shoot-mobile { 0% { opacity:1; transform:translate(0,0) scale(.55) rotate(-35deg); } 65% { opacity:1; transform:translate(54vw,-75px) scale(1.05) rotate(300deg); } 100% { opacity:0; transform:translate(67vw,-64px) scale(.45) rotate(480deg); } }
 @media (max-width: 430px) {
   .sg-scene { grid-template-columns: minmax(0,1fr) 100px; gap: 3px; min-height: 220px; padding: 12px; }
   .sg-target { right: -8px; width: 96px; }
+  .sg-projectile.is-flying { animation-name: sg-shoot-small; }
   .sg-target span { font-size: 1.12rem; }
   .sg-scene-figure { min-height: 165px; }
   .sg-ninja { left: -8px; font-size: 3rem; }
@@ -102,6 +105,7 @@
   .sg-counts { gap: 5px; }
   .sg-count-chip { font-size: .76rem; }
 }
+@keyframes sg-shoot-small { 0% { opacity:1; transform:translate(0,0) scale(.55) rotate(-35deg); } 65% { opacity:1; transform:translate(56vw,-68px) scale(1.05) rotate(300deg); } 100% { opacity:0; transform:translate(68vw,-58px) scale(.45) rotate(480deg); } }
 @media (prefers-reduced-motion: reduce) {
   .sg-scene-spark { animation: none; }
   .sg-projectile.is-flying { animation-duration: .01ms; }
