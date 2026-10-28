@@ -23,14 +23,25 @@
   </header>
 
   <nav class="tabs" aria-label="学習メニュー">
-    <button class="tab is-active" data-tab="quiz">チャレンジ</button>
-    <button class="tab" data-tab="composer">数をつくる</button>
-    <button class="tab tab-shushutto" data-tab="shushutto">✦ シュシュっと</button>
-    <button class="tab" data-tab="decomposer">数を分ける</button>
-    <button class="tab" data-tab="number-line">数のならび</button>
-    <button class="tab" data-tab="comparison">大きさくらべ</button>
-    <button class="tab" data-tab="grouping">いくつ分</button>
-    <button class="tab tab-collection" data-tab="badges">🏅 バッジ</button>
+    <div class="tab-group tab-group-practice" aria-label="問題に挑戦">
+      <span class="tab-group-label">チャレンジ</span>
+      <button class="tab is-active" data-tab="quiz" aria-controls="quiz" aria-current="page">10問に挑戦</button>
+    </div>
+    <div class="tab-group tab-group-number" aria-label="数のしくみを調べる">
+      <span class="tab-group-label">数のしくみを調べる</span>
+      <div class="tab-group-buttons">
+        <button class="tab" data-tab="composer" aria-controls="composer">数をつくる</button>
+        <button class="tab tab-shushutto" data-tab="shushutto" aria-controls="shushutto">✦ シュシュっと</button>
+        <button class="tab" data-tab="decomposer" aria-controls="decomposer">数を分ける</button>
+        <button class="tab" data-tab="number-line" aria-controls="number-line">数のならび</button>
+        <button class="tab" data-tab="comparison" aria-controls="comparison">大きさくらべ</button>
+        <button class="tab" data-tab="grouping" aria-controls="grouping">いくつ分</button>
+      </div>
+    </div>
+    <div class="tab-group tab-group-collection" aria-label="学習の記録">
+      <span class="tab-group-label">学習の記録</span>
+      <button class="tab tab-collection" data-tab="badges" aria-controls="badges">🏅 バッジ</button>
+    </div>
   </nav>
 
   <main class="app-shell">
