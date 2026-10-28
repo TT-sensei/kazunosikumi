@@ -197,6 +197,20 @@ export function initComparison(root) {
         font-size: 0.9rem;
         line-height: 1.6;
       }
+      /* タブレット・スマートフォンでの操作性 */
+      .np-comp-container .np-preset-btn { min-height: 44px; padding: .65rem .9rem; touch-action: manipulation; }
+      .np-comp-container .np-input-grid input { min-height: 48px; }
+      .np-comp-container .np-place-table-wrapper { max-width: 100%; overscroll-behavior-x: contain; }
+      .np-comp-container .np-place-column { flex: 0 0 auto; }
+      @media (max-width: 560px) {
+        .np-comp-container { padding: .75rem; }
+        .np-comp-container .np-input-grid { gap: .6rem; }
+        .np-comp-container .np-digit-box { width: 34px; height: 38px; font-size: 1.2rem; }
+        .np-comp-container .np-place-column { min-width: 46px; padding: 4px; }
+        .np-comp-container .np-place-name { font-size: .68rem; white-space: nowrap; }
+        .np-comp-container .np-place-pointer { font-size: .7rem; }
+        .np-comp-container .np-visual-section, .np-comp-container .np-place-section { padding: .7rem; }
+      }
     </style>
 
     <div class="np-comp-container">
