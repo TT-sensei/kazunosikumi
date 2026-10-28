@@ -1,13 +1,32 @@
 /**
  * number-park: くらいどり・数分解モジュール（折り紙束表示対応）
+ * 入力した数を、10000のたば・1000のたば・100のたば・10のたば・1まいの
+ * 位ごとの個数に分解して表示する（99999まで）。
  */
 const UNITS = [
+  {
+    key: 'tenThousands',
+    label: '10000',
+    value: 10000,
+    title: '10000のたば',
+    color: '#6b46c1',
+    bg: '#faf5ff',
+    border: '#d6bcfa'
+  },
+  {
+    key: 'thousands',
+    label: '1000',
+    value: 1000,
+    title: '1000のたば',
+    color: '#276749',
+    bg: '#f0fff4',
+    border: '#9ae6b4'
+  },
   {
     key: 'hundreds',
     label: '100',
     value: 100,
     title: '100のたば',
-    sub: '100枚入り',
     color: '#e53e3e',
     bg: '#fff5f5',
     border: '#feb2b2'
@@ -17,7 +36,6 @@ const UNITS = [
     label: '10',
     value: 10,
     title: '10のたば',
-    sub: '10枚入り',
     color: '#3182ce',
     bg: '#ebf8ff',
     border: '#90cdf4'
@@ -27,7 +45,6 @@ const UNITS = [
     label: '1',
     value: 1,
     title: '1まい',
-    sub: 'ばら',
     color: '#dd6b20',
     bg: '#fffaf0',
     border: '#fbd38d'
@@ -36,7 +53,27 @@ const UNITS = [
 
 // SVGアイコン生成（折り紙の束）
 function getOrigamiSvg(type) {
-  if (type === 'hundreds') {
+  if (type === 'tenThousands') {
+    return `
+      <svg width="56" height="48" viewBox="0 0 56 48" fill="none">
+        <rect x="4" y="14" width="48" height="30" rx="4" fill="#d6bcfa" stroke="#805ad5" stroke-width="2"/>
+        <rect x="4" y="9" width="48" height="30" rx="4" fill="#b794f4" stroke="#805ad5" stroke-width="2"/>
+        <rect x="4" y="4" width="48" height="30" rx="4" fill="#805ad5"/>
+        <rect x="22" y="4" width="12" height="30" fill="#e9d8fd" opacity="0.9"/>
+        <text x="28" y="23" font-size="9" font-weight="bold" fill="#44337a" text-anchor="middle">10000</text>
+      </svg>
+    `;
+  } else if (type === 'thousands') {
+    return `
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+        <rect x="6" y="12" width="36" height="30" rx="4" fill="#9ae6b4" stroke="#38a169" stroke-width="2"/>
+        <rect x="6" y="8" width="36" height="30" rx="4" fill="#68d391" stroke="#38a169" stroke-width="2"/>
+        <rect x="6" y="4" width="36" height="30" rx="4" fill="#38a169"/>
+        <rect x="18" y="4" width="12" height="30" fill="#c6f6d5" opacity="0.9"/>
+        <text x="24" y="23" font-size="9" font-weight="bold" fill="#22543d" text-anchor="middle">1000</text>
+      </svg>
+    `;
+  } else if (type === 'hundreds') {
     return `
       <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
         <rect x="6" y="12" width="36" height="30" rx="4" fill="#feb2b2" stroke="#e53e3e" stroke-width="2"/>
@@ -72,7 +109,7 @@ export function initPlaceValueDecomposer(root) {
     <style>
       .number-park-decomposer {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-        max-width: 720px;
+        max-width: 860px;
         margin: 0 auto;
         padding: 1rem;
         box-sizing: border-box;
@@ -246,22 +283,23 @@ export function initPlaceValueDecomposer(root) {
     </style>
 
     <div class="number-park-decomposer">
-      <p class="description">数を入力すると、100のたば・10のたば・1まいが何こあるかに分けて考えます。</p>
+      <p class="description">数を入力すると、位ごとに何この束があるかに分けて考えます（99999まで）。</p>
 
       <!-- 入力パネル -->
       <div class="input-panel">
         <div class="input-group">
           <label for="decompose-number">分けたい数</label>
           <div class="input-row">
-            <input id="decompose-number" type="number" min="0" max="99999999" value="320">
+            <input id="decompose-number" type="number" min="0" max="99999" value="320">
           </div>
           <div class="preset-buttons">
             <span class="preset-label">ためしてみよう：</span>
             <button class="preset-btn" data-value="320">320</button>
             <button class="preset-btn" data-value="504">504</button>
-            <button class="preset-btn" data-value="123">123</button>
             <button class="preset-btn" data-value="450">450</button>
-            <button class="preset-btn" data-value="888">888</button>
+            <button class="preset-btn" data-value="5206">5,206</button>
+            <button class="preset-btn" data-value="12034">12,034</button>
+            <button class="preset-btn" data-value="34050">34,050</button>
           </div>
         </div>
       </div>
@@ -283,33 +321,33 @@ export function initPlaceValueDecomposer(root) {
   const messageBox = root.querySelector('#message-box');
 
   function render() {
-    const number = Math.max(0, Math.floor(Number(input.value) || 0));
+    const number = Math.min(99999, Math.max(0, Math.floor(Number(input.value) || 0)));
 
-    const hundreds = Math.floor(number / 100);
-    const tens = Math.floor((number % 100) / 10);
-    const ones = number % 10;
+    // 位ごとの個数（各0〜9）
+    const counts = {};
+    UNITS.forEach((u) => {
+      counts[u.key] = Math.floor(number / u.value) % 10;
+    });
 
-    const counts = { hundreds, tens, ones };
+    // 表示する位は「その数のいちばん大きい位」まで（ただし最低でも100の位までは見せる）
+    const highestValue = UNITS.find((u) => number >= u.value)?.value || 1;
+    const displayFrom = Math.max(highestValue, 100);
+    const visibleUnits = UNITS.filter((u) => u.value <= displayFrom);
 
     // 1. ステージ（折り紙の束）の描画
-    stageContainer.innerHTML = UNITS.map((u) => {
+    stageContainer.innerHTML = visibleUnits.map((u) => {
       const count = counts[u.key];
       let itemsHtml = '';
 
-      // 表示上限12個で調整（溢れる分は数字で補足）
-      const displayCount = Math.min(count, 12);
-      for (let i = 0; i < displayCount; i++) {
+      for (let i = 0; i < count; i++) {
         itemsHtml += getOrigamiSvg(u.key);
-      }
-      if (count > 12) {
-        itemsHtml += `<span style="font-size:0.8rem; font-weight:bold; color:${u.color};">+${count - 12}</span>`;
       }
 
       return `
         <div class="stage-group">
           <div class="stage-items">${itemsHtml || '<span style="color:#cbd5e0; font-size:0.8rem;">(なし)</span>'}</div>
           <div class="stage-label" style="background-color: ${u.bg}; color: ${u.color}; border: 1px solid ${u.border};">
-            ${u.title} × ${count.toLocaleString()}個
+            ${u.title} × ${count}個
           </div>
         </div>
       `;
@@ -322,29 +360,21 @@ export function initPlaceValueDecomposer(root) {
         <div class="card-value">${number.toLocaleString()}</div>
       </div>
       <div class="operator">=</div>
-      <div class="card" style="border: 2px solid ${UNITS[0].border}; color: ${UNITS[0].color};">
-        <div class="card-title">100のたば</div>
-        <div class="card-value">${hundreds.toLocaleString()} 個</div>
-        <div class="card-sub">（${(hundreds * 100).toLocaleString()}）</div>
-      </div>
-      <div class="operator">+</div>
-      <div class="card" style="border: 2px solid ${UNITS[1].border}; color: ${UNITS[1].color};">
-        <div class="card-title">10のたば</div>
-        <div class="card-value">${tens} 個</div>
-        <div class="card-sub">（${tens * 10}）</div>
-      </div>
-      <div class="operator">+</div>
-      <div class="card" style="border: 2px solid ${UNITS[2].border}; color: ${UNITS[2].color};">
-        <div class="card-title">1まい</div>
-        <div class="card-value">${ones} 個</div>
-        <div class="card-sub">（${ones}）</div>
-      </div>
+      ${visibleUnits.map((u, i) => `
+        ${i > 0 ? '<div class="operator">+</div>' : ''}
+        <div class="card" style="border: 2px solid ${u.border}; color: ${u.color};">
+          <div class="card-title">${u.title}</div>
+          <div class="card-value">${counts[u.key]} 個</div>
+          <div class="card-sub">（${(counts[u.key] * u.value).toLocaleString()}）</div>
+        </div>
+      `).join('')}
     `;
 
     // 3. メッセージの描画
+    const parts = visibleUnits.map((u) => `${u.title}が <strong>${counts[u.key]}個</strong>`);
     messageBox.innerHTML = `
       <strong style="font-size: 1.2rem; color: #2b6cb0;">${number.toLocaleString()}</strong> は、<br>
-      100のたばが <strong>${hundreds.toLocaleString()}個</strong>、10のたばが <strong>${tens}個</strong>、1まいが <strong>${ones}個</strong> です。
+      ${parts.join('、')} です。
     `;
   }
 

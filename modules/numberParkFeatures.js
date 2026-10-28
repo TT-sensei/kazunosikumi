@@ -80,6 +80,41 @@ export function publishNavi(character, pose, message) {
   }));
 }
 
+// 紙吹雪の演出（正解・チャレンジ完了・バッジ解放などの「できた！」の瞬間に使う）
+export function celebrate(size = 'small') {
+  try {
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+    const colors = ['#e53e3e', '#3182ce', '#dd6b20', '#38a169', '#805ad5', '#f6c90e'];
+    const count = size === 'big' ? 90 : 36;
+    const layer = document.createElement('div');
+    layer.setAttribute('aria-hidden', 'true');
+    layer.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden;';
+    document.body.append(layer);
+    const width = window.innerWidth;
+    for (let i = 0; i < count; i += 1) {
+      const piece = document.createElement('div');
+      const sizePx = 6 + Math.random() * 7;
+      const startX = Math.random() * width;
+      const drift = (Math.random() - 0.5) * 180;
+      const rotate = (Math.random() - 0.5) * 720;
+      piece.style.cssText = `position:absolute;top:-16px;left:0;width:${sizePx}px;height:${sizePx * (Math.random() > 0.5 ? 1 : 0.45)}px;background:${colors[i % colors.length]};border-radius:${Math.random() > 0.5 ? '50%' : '2px'};`;
+      layer.append(piece);
+      const animation = piece.animate([
+        { transform: `translate(${startX}px, -16px) rotate(0deg)`, opacity: 1 },
+        { transform: `translate(${startX + drift}px, ${window.innerHeight + 30}px) rotate(${rotate}deg)`, opacity: 0.9 }
+      ], {
+        duration: 1600 + Math.random() * 1400,
+        delay: Math.random() * (size === 'big' ? 450 : 150),
+        easing: 'cubic-bezier(0.2, 0.6, 0.4, 1)'
+      });
+      animation.onfinish = () => piece.remove();
+    }
+    setTimeout(() => layer.remove(), size === 'big' ? 4200 : 3400);
+  } catch (_) {
+    // 演出が失敗しても学習の流れは止めない
+  }
+}
+
 const BADGES = [
   { id: 'first-step', group: 'common', label: 'はじめの一歩', description: 'チャレンジに1問こたえた', path: 'first-step', check: s => s.answered >= 1 },
   { id: 'number-sense', group: 'math', label: '数のセンス', description: '正解を5問集めた', path: 'number-sense', check: s => s.correct >= 5 },
@@ -239,7 +274,7 @@ export function initBadgeCollection(root) {
             <article class="np-badge-card ${got ? 'is-unlocked' : 'is-locked'}">
               <div class="np-badge-image-wrap"><img src="${src}" alt="${got ? badge.label : 'ロック中のバッジ'}" loading="lazy"></div>
               <strong>${got ? badge.label : '？？？'}</strong>
-              <small>${got ? badge.description : '条件を達成すると解放'}</small>
+              <small>${got ? badge.description : `あける条件：${badge.description}`}</small>
             </article>
           `;
         }).join('')}
@@ -254,6 +289,7 @@ export function initBadgeCollection(root) {
     toast.className = 'np-badge-toast';
     toast.innerHTML = `<span>🏅 バッジをゲット！</span><strong>${badge.label}</strong>`;
     document.body.append(toast);
+    celebrate();
     setTimeout(() => toast.remove(), 2600);
   });
   render();

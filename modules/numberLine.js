@@ -48,6 +48,9 @@ export function initNumberLine(root) {
         flex: 1;
         color: #2d3748;
       }
+      .number-park-line .label-text {
+        white-space: nowrap;
+      }
       .number-park-line .input-grid select,
       .number-park-line .input-grid input[type="range"] {
         margin-top: 0.5rem;
@@ -153,7 +156,7 @@ export function initNumberLine(root) {
             ${STEPS.map((s) => `<option value="${s.value}">${s.label}</option>`).join('')}
           </select>
         </label>
-        <label>ジャンプ回数 （<span id="jump-count-label">3</span> 回）
+        <label><span class="label-text">ジャンプ回数（<span id="jump-count-label">3</span>回）</span>
           <input id="line-slider" type="range" min="0" max="15" value="3">
         </label>
       </div>

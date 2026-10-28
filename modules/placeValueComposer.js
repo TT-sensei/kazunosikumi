@@ -1,7 +1,31 @@
 /**
  * number-park: くらいどり・数づくりモジュール（折り紙束表示対応）
+ * 10000のたば・1000のたば・100のたば・10のたば・1まいを扱える。
+ * 「どこまで作る？」で扱う位の範囲を切り替える。
  */
 const UNITS = [
+  {
+    key: 'tenThousands',
+    label: '10000',
+    value: 10000,
+    title: '10000のたば',
+    sub: '10000枚入り',
+    color: '#6b46c1',
+    bg: '#faf5ff',
+    border: '#d6bcfa',
+    btnBg: '#805ad5'
+  },
+  {
+    key: 'thousands',
+    label: '1000',
+    value: 1000,
+    title: '1000のたば',
+    sub: '1000枚入り',
+    color: '#276749',
+    bg: '#f0fff4',
+    border: '#9ae6b4',
+    btnBg: '#38a169'
+  },
   {
     key: 'hundreds',
     label: '100',
@@ -37,9 +61,38 @@ const UNITS = [
   }
 ];
 
+// 扱う位の範囲（小さい位から何位まで使うか）
+const RANGES = [
+  { places: 3, label: '100のたばまで' },
+  { places: 4, label: '1000のたばまで' },
+  { places: 5, label: '10000のたばまで' }
+];
+
 // SVGアイコン生成（折り紙の束）
 function getOrigamiSvg(type) {
-  if (type === 'hundreds') {
+  if (type === 'tenThousands') {
+    // 10000の束（大きな箱）
+    return `
+      <svg width="56" height="48" viewBox="0 0 56 48" fill="none">
+        <rect x="4" y="14" width="48" height="30" rx="4" fill="#d6bcfa" stroke="#805ad5" stroke-width="2"/>
+        <rect x="4" y="9" width="48" height="30" rx="4" fill="#b794f4" stroke="#805ad5" stroke-width="2"/>
+        <rect x="4" y="4" width="48" height="30" rx="4" fill="#805ad5"/>
+        <rect x="22" y="4" width="12" height="30" fill="#e9d8fd" opacity="0.9"/>
+        <text x="28" y="23" font-size="9" font-weight="bold" fill="#44337a" text-anchor="middle">10000</text>
+      </svg>
+    `;
+  } else if (type === 'thousands') {
+    // 1000の束（重なった束）
+    return `
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+        <rect x="6" y="12" width="36" height="30" rx="4" fill="#9ae6b4" stroke="#38a169" stroke-width="2"/>
+        <rect x="6" y="8" width="36" height="30" rx="4" fill="#68d391" stroke="#38a169" stroke-width="2"/>
+        <rect x="6" y="4" width="36" height="30" rx="4" fill="#38a169"/>
+        <rect x="18" y="4" width="12" height="30" fill="#c6f6d5" opacity="0.9"/>
+        <text x="24" y="23" font-size="9" font-weight="bold" fill="#22543d" text-anchor="middle">1000</text>
+      </svg>
+    `;
+  } else if (type === 'hundreds') {
     // 100の束（重なった大きな箱・束）
     return `
       <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
@@ -74,13 +127,16 @@ function getOrigamiSvg(type) {
 export function initPlaceValueComposer(root) {
   if (!root) return;
 
-  const counts = { hundreds: 2, tens: 3, ones: 5 }; // 初期値
+  const counts = { tenThousands: 0, thousands: 0, hundreds: 2, tens: 3, ones: 5 }; // 初期値
+  let rangePlaces = 3; // 最初は100のたばまで
+
+  const activeUnits = () => UNITS.slice(UNITS.length - rangePlaces);
 
   root.innerHTML = `
     <style>
       .number-park-composer {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-        max-width: 720px;
+        max-width: 860px;
         margin: 0 auto;
         padding: 1rem;
         box-sizing: border-box;
@@ -95,10 +151,36 @@ export function initPlaceValueComposer(root) {
         line-height: 1.5;
       }
 
+      /* 範囲切り替え */
+      .number-park-composer .range-panel {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-bottom: 1rem;
+      }
+      .number-park-composer .range-label {
+        font-size: 0.85rem;
+        font-weight: bold;
+        color: #4a5568;
+      }
+      .number-park-composer .range-chip {
+        background: #edf2f7;
+        color: #4a5568;
+        border: 2px solid transparent;
+        padding: 0.45rem 0.8rem;
+        font-size: 0.85rem;
+      }
+      .number-park-composer .range-chip.is-active {
+        background: #3182ce;
+        color: #ffffff;
+        border-color: #2b6cb0;
+      }
+
       /* 操作ボタンエリア */
       .number-park-composer .control-panel {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
         gap: 0.75rem;
         margin-bottom: 1.25rem;
       }
@@ -237,24 +319,17 @@ export function initPlaceValueComposer(root) {
     </style>
 
     <div class="number-park-composer">
-      <p class="description">ボタンを押して折り紙の束をあつめ、数をつくります。</p>
+      <p class="description">ボタンを押して折り紙の束をあつめ、数をつくります。「どこまで作る？」で、10000のたばまで広げられます。</p>
 
-      <div class="btn-reset-container">
+      <div class="range-panel">
+        <span class="range-label">どこまで作る？</span>
+        <span id="range-chips"></span>
+        <span style="flex:1"></span>
         <button class="btn-reset" data-reset>0にもどす</button>
       </div>
 
       <!-- 操作パネル -->
-      <div class="control-panel">
-        ${UNITS.map((u) => `
-          <div class="unit-control" style="border-color: ${u.border}; background-color: ${u.bg};">
-            <div class="unit-control-title" style="color: ${u.color};">${u.title}</div>
-            <div class="btn-group">
-              <button class="btn-add" data-add="${u.key}" style="background-color: ${u.btnBg};">+ ${u.label}</button>
-              <button class="btn-sub" data-sub="${u.key}">-</button>
-            </div>
-          </div>
-        `).join('')}
-      </div>
+      <div class="control-panel" id="control-panel"></div>
 
       <!-- 折り紙の塊表示ステージ -->
       <div class="stage-container" id="stage-container"></div>
@@ -267,18 +342,37 @@ export function initPlaceValueComposer(root) {
     </div>
   `;
 
+  const rangeChips = root.querySelector('#range-chips');
+  const controlPanel = root.querySelector('#control-panel');
   const stageContainer = root.querySelector('#stage-container');
   const cardsDisplay = root.querySelector('#cards-display');
   const messageBox = root.querySelector('#message-box');
 
   function render() {
-    const total = counts.hundreds * 100 + counts.tens * 10 + counts.ones;
+    const units = activeUnits();
+    const total = units.reduce((sum, u) => sum + counts[u.key] * u.value, 0);
+
+    // 0. 範囲チップ
+    rangeChips.innerHTML = RANGES.map((r) => `
+      <button class="range-chip ${r.places === rangePlaces ? 'is-active' : ''}" data-range="${r.places}">${r.label}</button>
+    `).join('');
+
+    // 0.5 操作パネル
+    controlPanel.innerHTML = units.map((u) => `
+      <div class="unit-control" style="border-color: ${u.border}; background-color: ${u.bg};">
+        <div class="unit-control-title" style="color: ${u.color};">${u.title}</div>
+        <div class="btn-group">
+          <button class="btn-add" data-add="${u.key}" style="background-color: ${u.btnBg};">+ ${u.label}</button>
+          <button class="btn-sub" data-sub="${u.key}">-</button>
+        </div>
+      </div>
+    `).join('');
 
     // 1. ステージ（塊グラフィック）の描画
-    stageContainer.innerHTML = UNITS.map((u) => {
+    stageContainer.innerHTML = units.map((u) => {
       const count = counts[u.key];
       let itemsHtml = '';
-      
+
       // アイコンを個数分生成（上限15個で表示調整）
       const displayCount = Math.min(count, 15);
       for (let i = 0; i < displayCount; i++) {
@@ -300,20 +394,13 @@ export function initPlaceValueComposer(root) {
 
     // 2. カードの描画
     cardsDisplay.innerHTML = `
-      <div class="card" style="border: 2px solid ${UNITS[0].border}; color: ${UNITS[0].color};">
-        <div class="card-title">100のたば</div>
-        <div class="card-value">${counts.hundreds * 100}</div>
-      </div>
-      <div class="operator">+</div>
-      <div class="card" style="border: 2px solid ${UNITS[1].border}; color: ${UNITS[1].color};">
-        <div class="card-title">10のたば</div>
-        <div class="card-value">${counts.tens * 10}</div>
-      </div>
-      <div class="operator">+</div>
-      <div class="card" style="border: 2px solid ${UNITS[2].border}; color: ${UNITS[2].color};">
-        <div class="card-title">1まい</div>
-        <div class="card-value">${counts.ones}</div>
-      </div>
+      ${units.map((u, i) => `
+        ${i > 0 ? '<div class="operator">+</div>' : ''}
+        <div class="card" style="border: 2px solid ${u.border}; color: ${u.color};">
+          <div class="card-title">${u.title}</div>
+          <div class="card-value">${(counts[u.key] * u.value).toLocaleString()}</div>
+        </div>
+      `).join('')}
       <div class="operator">=</div>
       <div class="card" style="border: 2px solid #4a5568; background-color: #f7fafc; color: #2d3748;">
         <div class="card-title">できた数</div>
@@ -322,16 +409,18 @@ export function initPlaceValueComposer(root) {
     `;
 
     // 3. メッセージの描画
+    const parts = units.map((u) => `${u.title}が <strong>${counts[u.key]}個</strong>`);
     messageBox.innerHTML = `
-      100のたばが <strong>${counts.hundreds}個</strong>、10のたばが <strong>${counts.tens}個</strong>、1まいが <strong>${counts.ones}個</strong> で<br>
+      ${parts.join('、')} で<br>
       あわせて <strong style="font-size: 1.2rem; color: #2b6cb0;">${total.toLocaleString()}</strong> です。
     `;
   }
 
-  // イベントハンドラ（加算・減算・リセット）
+  // イベントハンドラ（加算・減算・リセット・範囲切替）
   root.addEventListener('click', (event) => {
     const addKey = event.target.dataset.add;
     const subKey = event.target.dataset.sub;
+    const range = event.target.dataset.range;
     const isReset = event.target.hasAttribute('data-reset');
 
     if (addKey) {
@@ -340,10 +429,15 @@ export function initPlaceValueComposer(root) {
     } else if (subKey) {
       counts[subKey] = Math.max(0, counts[subKey] - 1);
       render();
+    } else if (range) {
+      rangePlaces = Number(range);
+      // 範囲外の位は0にもどす（見えない束が合計に残らないように）
+      UNITS.forEach((u) => {
+        if (!activeUnits().includes(u)) counts[u.key] = 0;
+      });
+      render();
     } else if (isReset) {
-      counts.hundreds = 0;
-      counts.tens = 0;
-      counts.ones = 0;
+      UNITS.forEach((u) => { counts[u.key] = 0; });
       render();
     }
   });

@@ -1,5 +1,6 @@
 import { generateProblems, levelSettings, problemTypes } from './problemSets.js';
 import {
+  celebrate,
   getBadgeSummary,
   NAVI_ASSETS,
   getNaviSrc,
@@ -63,11 +64,14 @@ export function initQuizEngine(root) {
   const state = {
     mode: 'setup',
     selectedLevel: 1,
-    selectedType: null,
+    selectedType: problemTypes[0].id,
     problems: [],
     currentIndex: 0,
     correctCount: 0,
     answersById: {},
+    attemptsById: {},
+    retryNotice: false,
+    correctOnRetry: false,
     userInputValue: '',
     selectedCards: [],
     availableCards: [],
@@ -168,6 +172,7 @@ export function initQuizEngine(root) {
     state.currentIndex = 0;
     state.correctCount = 0;
     state.answersById = {};
+    state.attemptsById = {};
     state.validationMessage = '';
     state.naviCharacter = pickNavi();
     state.naviPose = 'welcome';
@@ -181,7 +186,7 @@ export function initQuizEngine(root) {
     state.problems = [];
     state.currentIndex = 0;
     state.answersById = {};
-    state.selectedType = null;
+    state.attemptsById = {};
     state.validationMessage = '';
     state.setupNavi = pickNavi();
     state.naviCharacter = state.setupNavi;
@@ -195,6 +200,8 @@ export function initQuizEngine(root) {
     state.userInputValue = '';
     state.showHint = false;
     state.validationMessage = '';
+    state.retryNotice = false;
+    state.correctOnRetry = false;
     const current = state.problems[state.currentIndex];
     const previousAnswer = current ? state.answersById[current.id] : undefined;
     state.isAnswered = previousAnswer !== undefined;
@@ -226,8 +233,26 @@ export function initQuizEngine(root) {
       return;
     }
 
-    state.isCorrect = normalize(rawAnswer) === normalize(current.answer);
+    const isCorrect = normalize(rawAnswer) === normalize(current.answer);
+    const attempts = state.attemptsById[current.id] || 0;
+
+    // 1回目のまちがいは、答えを見せずにもう1回チャンスをあげる
+    if (!isCorrect && attempts === 0) {
+      state.attemptsById[current.id] = 1;
+      state.retryNotice = true;
+      state.validationMessage = '';
+      state.naviCharacter = pickNavi(state.naviCharacter);
+      state.naviPose = 'retry';
+      state.naviMessage = 'まちがいは発見のチャンス。あと1回、考え直してみよう！';
+      publishNavi(state.naviCharacter, state.naviPose, state.naviMessage);
+      render();
+      return;
+    }
+
+    state.isCorrect = isCorrect;
+    state.correctOnRetry = isCorrect && attempts > 0;
     state.isAnswered = true;
+    state.retryNotice = false;
     state.answersById[current.id] = state.isCorrect;
     state.correctCount = Object.values(state.answersById).filter(Boolean).length;
     state.validationMessage = '';
@@ -235,7 +260,10 @@ export function initQuizEngine(root) {
     state.naviCharacter = pickNavi(state.naviCharacter);
     state.naviPose = state.isCorrect ? 'correct' : 'retry';
     state.naviMessage = state.isCorrect ? '正解！数の見方がつながったね！' : 'まちがいは発見のチャンス。もう一度見てみよう！';
-    if (state.isCorrect) playCorrectSound();
+    if (state.isCorrect) {
+      playCorrectSound();
+      celebrate();
+    }
     publishNavi(state.naviCharacter, state.naviPose, state.naviMessage);
     render();
   }
@@ -258,6 +286,7 @@ export function initQuizEngine(root) {
     state.naviMessage = state.correctCount + '問正解！10問のチャレンジ、おつかれさま！';
     publishNavi(state.naviCharacter, state.naviPose, state.naviMessage);
     render();
+    celebrate('big');
   }
 
   function renderQuiz() {
@@ -294,7 +323,8 @@ export function initQuizEngine(root) {
         </div>
         ${state.validationMessage ? `<p class="np-validation">${state.validationMessage}</p>` : ''}
         ${state.showHint ? `<div class="np-hint-box">💡 <strong>ヒント:</strong> ${current.hint}</div>` : ''}
-        ${state.isAnswered ? `<div class="np-feedback ${state.isCorrect ? 'correct' : 'wrong'}">${state.isCorrect ? '🎉 正解！位や数のかさなりをよく見られたね！' : `もう一度考えてみよう。正解は「 <strong>${formatNumber(current.answer)}</strong> 」だよ。`}</div>` : ''}
+        ${state.isAnswered ? `<div class="np-feedback ${state.isCorrect ? 'correct' : 'wrong'}">${state.isCorrect ? ((state.attemptsById[current.id] || 0) > 0 ? '🎉 正解！あきらめずに考え直せたね！' : '🎉 正解！位や数のかさなりをよく見られたね！') : `正解は「 <strong>${formatNumber(current.answer)}</strong> 」だよ。答えのしくみを、たしかめてみよう。`}</div>` : ''}
+        ${!state.isAnswered && state.retryNotice ? `<div class="np-feedback wrong">おしい！あと1回、考え直してみよう。💡ヒントを使うのもOKだよ。</div>` : ''}
       </div>
     `;
     bindEvents();
@@ -352,7 +382,7 @@ export function initQuizEngine(root) {
     });
     root.querySelector('#np-btn-next')?.addEventListener('click', () => {
       if (!state.isAnswered) {
-        state.validationMessage = '答え合わせをしてから、つぎへ進もう。';
+        state.validationMessage = state.retryNotice ? 'あと1回、考え直してから答え合わせをしよう。' : '答え合わせをしてから、つぎへ進もう。';
         render();
         return;
       }

@@ -1,3 +1,5 @@
+import { celebrate } from './numberParkFeatures.js';
+
 const SG_LEVELS = [
   { label: '100まで', detail: '10と1でつくる', min: 10, max: 99, units: [10, 1] },
   { label: '1000まで', detail: '100・10・1でつくる', min: 100, max: 999, units: [100, 10, 1] },
@@ -90,6 +92,7 @@ export function initShushuttoGame(root) {
     history.push(unit); total += unit; completed = total === target;
     soundThrow(unit);
     render();
+    if (completed) celebrate();
     const scene = root.querySelector('.sg-scene');
     if (scene) {
       scene.classList.remove('sg-impact', 'sg-impact-over');
